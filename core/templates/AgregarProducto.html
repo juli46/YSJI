@@ -1,0 +1,759 @@
+{% extends 'dashboard_base.html' %} {% load static %} {% block content %}
+<link href="{% static 'css/AgregarProducto.css' %}" rel="stylesheet" />
+<style>
+  .error-message {
+    color: red;
+    font-size: 0.85em;
+    margin-top: 4px;
+    display: none;
+  }
+  .input-error {
+    border-color: red !important;
+  }
+  /* Campana de notificaciones de stock */
+  .stock-bell {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    cursor: pointer;
+    color: #000 !important;
+    font-size: 1.25rem;
+  }
+  .stock-bell .badge-bell {
+    position: relative;
+    top: -10px;
+    left: -8px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 999px;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if messages %}
+  {% for message in messages %}
+    {% if 'dashboard' in message.tags %}
+      <script>
+        document.addEventListener('DOMContentLoaded', function(){
+          Swal.fire({
+            icon: "{% if message.level >= 40 %}error{% elif message.level >= 30 %}warning{% elif message.level >= 25 %}success{% else %}info{% endif %}",
+            title: "{{ message|escapejs }}",
+            showConfirmButton: false,
+            timer: 1800
+          });
+        });
+      </script>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if form and form.non_field_errors %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: "{{ form.non_field_errors|join:' ' |escapejs }}",
+        showConfirmButton: true
+      });
+    });
+  </script>
+{% endif %}
+
+<div class="container" style="position: relative;">
+  <h2>Gestión de Productos</h2>
+  <!-- Icono de campana para notificaciones de stock -->
+  <div class="stock-bell" id="stockBell" title="Productos agotados">
+    <i class="fas fa-bell"></i>
+    <span class="badge-bell" id="stockBellCount" style="display:none">0</span>
+  </div>
+  <button class="add-button" onclick="toggleMenu(true)">Agregar +</button>
+
+  <!-- JSON seguro con productos agotados (inyectado desde la vista) -->
+  <script id="outOfStockJson" type="application/json">{{ out_of_stock_json|safe }}</script>
+  <div class="overlay {% if producto_editar %}show{% endif %}" id="overlay"></div>
+  <div class="menu {% if producto_editar %}show{% endif %}" id="addMenu">
+  <form id="productForm" method="POST" enctype="multipart/form-data">
+      {% csrf_token %} {% if producto_editar %}
+      <input
+        type="hidden"
+        name="producto_id"
+        value="{{ producto_editar.id }}"
+      />
+      {% endif %}
+      <div class="split">
+        <div class="form-group">
+          <label for="{{ form.codigo_producto.id_for_label }}">Código</label>
+          {{ form.codigo_producto }}
+          <small class="error-message">{% if form.codigo_producto.errors %}{{ form.codigo_producto.errors|striptags }}{% endif %}</small>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.nombre_producto.id_for_label }}">Nombre</label>
+          {{ form.nombre_producto }}
+          <small class="error-message">{% if form.nombre_producto.errors %}{{ form.nombre_producto.errors|striptags }}{% endif %}</small>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="form-group">
+          <label for="{{ form.descripcion_producto.id_for_label }}">Descripción</label>
+          {{ form.descripcion_producto }}
+          <small class="error-message">{% if form.descripcion_producto.errors %}{{ form.descripcion_producto.errors|striptags }}{% endif %}</small>
+        </div>
+      </div>
+      <div class="split">
+        <div class="form-group">
+          <label for="{{ form.valor_producto.id_for_label }}">Valor</label>
+          {{ form.valor_producto }}
+          <small class="error-message">{% if form.valor_producto.errors %}{{ form.valor_producto.errors|striptags }}{% endif %}</small>
+        </div>
+        <!-- El campo cantidad fue movido al modelo Stock; se omite del formulario de producto -->
+        <div class="form-group">
+          <label for="{{ form.categoria.id_for_label }}">Categoría</label>
+          {{ form.categoria }}
+          <small class="error-message">{% if form.categoria.errors %}{{ form.categoria.errors|striptags }}{% endif %}</small>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.marca.id_for_label }}">Marca</label>
+          {{ form.marca }}
+          <small class="error-message">{% if form.marca.errors %}{{ form.marca.errors|striptags }}{% endif %}</small>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.proveedor.id_for_label }}">Proveedor</label>
+          {{ form.proveedor }}
+          <small class="error-message">{% if form.proveedor.errors %}{{ form.proveedor.errors|striptags }}{% endif %}</small>
+        </div>
+        <div class="form-group">
+          <label for="id_stock_cantidad">Stock</label>
+          <input type="number" name="stock_cantidad" id="id_stock_cantidad" min="0" value="{% if form.stock_cantidad.value %}{{ form.stock_cantidad.value }}{% elif producto_editar and producto_editar.stock %}{{ producto_editar.stock.cantidad }}{% else %}0{% endif %}" class="form-control" />
+          <small class="error-message">{% if form.stock_cantidad.errors %}{{ form.stock_cantidad.errors|striptags }}{% endif %}</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="imagenes"
+          >Imágenes del producto (puedes seleccionar varias)</label
+        >
+        <input type="file" name="imagenes" id="imagenes" multiple />
+  <small class="error-message">{% if form.tallas_disponibles.errors %}{{ form.tallas_disponibles.errors|striptags }}{% endif %}</small>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.tallas_disponibles.id_for_label }}"
+          >Tallas disponibles (separadas por coma)</label
+        >
+        {{ form.tallas_disponibles }}
+  <small class="error-message">{% if form.colores_disponibles.errors %}{{ form.colores_disponibles.errors|striptags }}{% endif %}</small>
+      </div>
+      <div class="form-group">
+        <label for="{{ form.colores_disponibles.id_for_label }}"
+          >Colores disponibles (separados por coma)</label
+        >
+        {{ form.colores_disponibles }}
+        <small class="error-message"></small>
+      </div>
+
+      {% if producto_editar and producto_editar.imagen_producto %}
+      <div class="form-group">
+        <p>Imagen principal actual:</p>
+        <img
+          src="{{ producto_editar.imagen_producto.url }}"
+          alt="Imagen actual"
+          width="120"
+        />
+      </div>
+      {% endif %}
+
+      <div class="button-group">
+        <button type="submit" class="submit-button">
+          {% if producto_editar %}Actualizar{% else %}Guardar{% endif %}
+        </button>
+        <button type="button" class="cancel-button" onclick="toggleMenu(false)">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <form
+    method="GET"
+    action="{% url 'buscar_productos' %}"
+    class="form-busqueda-horizontal"
+  >
+    <input
+      type="text"
+      name="id_busqueda"
+      value="{{ id_busqueda }}"
+      placeholder="ID"
+      pattern="\d*"
+      title="Solo números"
+    />
+    <input
+      type="text"
+      name="codigo_busqueda"
+      value="{{ codigo_busqueda }}"
+      placeholder="Código"
+    />
+    <input
+      type="text"
+      name="nombre_busqueda"
+      value="{{ nombre_busqueda }}"
+      placeholder="Nombre"
+    />
+    <button type="submit">Buscar</button>
+  </form>
+
+  <div class="tarjetas-productos">
+    {% for producto in productos %}
+    <div class="tarjeta-producto">
+      <div class="img-container">
+        {% if producto.imagenes.all %}
+        <div id="carousel{{ producto.id }}" class="carousel">
+          <div class="carousel-inner">
+            {% for imagen in producto.imagenes.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img
+                src="{{ imagen.imagen.url }}"
+                alt="{{ producto.nombre_producto }}"
+              />
+            </div>
+            {% endfor %}
+          </div>
+          {% if producto.imagenes.count > 1 %}
+          <!-- Flechas para navegar -->
+          <button
+            class="carousel-control-prev"
+            onclick="moveSlide('{{ producto.id }}', -1)"
+          >
+            <span class="carousel-control-prev-icon"></span>
+          </button>
+          <button
+            class="carousel-control-next"
+            onclick="moveSlide('{{ producto.id }}', 1)"
+          >
+            <span class="carousel-control-next-icon"></span>
+          </button>
+          {% endif %}
+        </div>
+        {% elif producto.imagen_producto %}
+        <img
+          src="{{ producto.imagen_producto.url }}"
+          alt="{{ producto.nombre_producto }}"
+        />
+        {% else %}
+        <div class="img-placeholder">Sin imagen</div>
+        {% endif %}
+      </div>
+      <div class="contenido">
+        <h4>{{ producto.nombre_producto }}</h4>
+        <p><strong>Código:</strong> {{ producto.codigo_producto }}</p>
+        <div class="acciones">
+          <a
+            href="{% url 'producto_detalle_dashboard' producto.id %}"
+            class="btn-ver-mas"
+            >Ver más</a
+          >
+          <a href="{% url 'editar_producto' producto.id %}" class="btn-editar"
+            >Editar</a
+          >
+          <a
+            href="{% url 'eliminar_producto' producto.id %}"
+            class="btn-eliminar btn btn-danger"
+            >Eliminar</a
+          >
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="mensaje-no-resultados">
+      No se encontraron productos con esos criterios.
+    </p>
+    {% endfor %}
+  </div>
+</div>
+
+<input
+  type="hidden"
+  id="mostrarMenu"
+  value="{% if producto_editar %}true{% else %}false{% endif %}"
+/>
+
+{% if producto_editar %}
+  <!-- Valores en inputs ocultos para poblar el formulario si el form no trae valores -->
+  <input type="hidden" id="_pe_codigo" value="{{ producto_editar.codigo_producto|default_if_none:''|escapejs }}" />
+  <input type="hidden" id="_pe_nombre" value="{{ producto_editar.nombre_producto|default_if_none:''|escapejs }}" />
+  <input type="hidden" id="_pe_descripcion" value="{{ producto_editar.descripcion_producto|default_if_none:''|escapejs }}" />
+  <input type="hidden" id="_pe_valor" value="{{ producto_editar.valor_producto|default_if_none:'' }}" />
+  <input type="hidden" id="_pe_categoria" value="{% if producto_editar.categoria %}{{ producto_editar.categoria.id }}{% else %}{% endif %}" />
+  <input type="hidden" id="_pe_marca" value="{% if producto_editar.marca %}{{ producto_editar.marca.id }}{% else %}{% endif %}" />
+  <input type="hidden" id="_pe_proveedor" value="{% if producto_editar.proveedor %}{{ producto_editar.proveedor.id }}{% else %}{% endif %}" />
+  <input type="hidden" id="_pe_tallas" value="{{ producto_editar.tallas_disponibles|default_if_none:''|escapejs }}" />
+  <input type="hidden" id="_pe_colores" value="{{ producto_editar.colores_disponibles|default_if_none:''|escapejs }}" />
+  <input type="hidden" id="_pe_stock" value="{% if producto_editar.stock %}{{ producto_editar.stock.cantidad }}{% else %}{% endif %}" />
+  <script>
+    // Abrir modal cuando la vista devolvió un producto para editar.
+    document.addEventListener('DOMContentLoaded', function(){
+      try { toggleMenu(true); } catch(e) { /* noop */ }
+    });
+  </script>
+{% endif %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("productForm");
+
+    if (!form) return; // seguridad, por si no existe el form en la vista
+
+    // Si el servidor indicó producto_editar y por alguna razón el ModelForm no rellenó
+    // los valores (inputs vacíos), tomar de los inputs ocultos y poblarlos.
+    try {
+      const hid = (id) => document.getElementById(id);
+      const prefills = [
+        {name: 'codigo_producto', hid: '_pe_codigo'},
+        {name: 'nombre_producto', hid: '_pe_nombre'},
+        {name: 'descripcion_producto', hid: '_pe_descripcion'},
+        {name: 'valor_producto', hid: '_pe_valor'},
+        {name: 'tallas_disponibles', hid: '_pe_tallas'},
+        {name: 'colores_disponibles', hid: '_pe_colores'},
+      ];
+      prefills.forEach(p => {
+        const el = form.querySelector('[name="' + p.name + '"]');
+        const h = hid(p.hid);
+        if (el && h && (!el.value || el.value === '')) {
+          el.value = h.value || '';
+        }
+      });
+      // selects
+      const hcat = hid('_pe_categoria');
+      if (hcat) {
+        const sel = form.querySelector('[name="categoria"]');
+        if (sel && (!sel.value || sel.value === '')) sel.value = hcat.value || '';
+      }
+      const hmarca = hid('_pe_marca');
+      if (hmarca) {
+        const sel = form.querySelector('[name="marca"]');
+        if (sel && (!sel.value || sel.value === '')) sel.value = hmarca.value || '';
+      }
+      const hprov = hid('_pe_proveedor');
+      if (hprov) {
+        const sel = form.querySelector('[name="proveedor"]');
+        if (sel && (!sel.value || sel.value === '')) sel.value = hprov.value || '';
+      }
+      // stock
+      const hstock = hid('_pe_stock');
+      const stockEl = form.querySelector('[name="stock_cantidad"]') || document.getElementById('id_stock_cantidad');
+      if (stockEl && hstock && (!stockEl.value || stockEl.value === '')) stockEl.value = hstock.value || 0;
+    } catch (e) {
+      // no bloquear si algo falla
+      console.warn('Error al prefijar campos desde inputs ocultos', e);
+    }
+
+    // Campos con sus mensajes de error
+    const campos = {
+      codigo: {
+        input: form.querySelector('[name="codigo_producto"]'),
+        errorElem: null,
+        validar() {
+          const val = this.input.value;
+          if (!val) return "El código es obligatorio.";
+          if (!/^\d+$/.test(val))
+            return "El código debe ser solo números, sin espacios ni letras.";
+          return "";
+        },
+      },
+      nombre: {
+        input: form.querySelector('[name="nombre_producto"]'),
+        errorElem: null,
+        validar() {
+          const val = this.input.value.trim();
+          if (val.length < 4)
+            return "El nombre debe tener al menos 4 caracteres.";
+          const letras = val.match(/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/g) || [];
+          if (letras.length < 4)
+            return "El nombre debe tener al menos 4 letras.";
+          return "";
+        },
+      },
+      descripcion: {
+        input: form.querySelector('[name="descripcion_producto"]'),
+        errorElem: null,
+        validar() {
+          const val = this.input.value.trim();
+          if (val.length < 10)
+            return "La descripción debe tener al menos 10 caracteres.";
+          return "";
+        },
+      },
+      valor: {
+        input: form.querySelector('[name="valor_producto"]'),
+        errorElem: null,
+        validar() {
+          const val = parseFloat(this.input.value);
+          if (isNaN(val) || val <= 0)
+            return "El valor debe ser un número positivo.";
+          return "";
+        },
+      },
+      cantidad: {
+        input: form.querySelector('[name="cantidad_producto"]'),
+        errorElem: null,
+        validar() {
+          if (!this.input) return "";
+          const val = parseInt(this.input.value);
+          if (isNaN(val) || val <= 0)
+            return "La cantidad debe ser un número entero positivo.";
+          return "";
+        },
+      },
+      categoria: {
+        input: form.querySelector('[name="categoria"]'),
+        errorElem: null,
+        validar() {
+          if (!this.input.value)
+            return "Debes seleccionar una categoría.";
+          return "";
+        },
+      },
+      marca: {
+        input: form.querySelector('[name="marca"]'),
+        errorElem: null,
+        validar() {
+          if (!this.input.value || this.input.value === "default")
+            return "Debes seleccionar una marca.";
+          return "";
+        },
+      },
+      proveedor: {
+        input: form.querySelector('[name="proveedor"]'),
+        errorElem: null,
+        validar() {
+          if (!this.input.value || this.input.value === "default")
+            return "Debes seleccionar un proveedor.";
+          return "";
+        },
+      },
+      stock: {
+        input: form.querySelector('[name="stock_cantidad"]') || document.getElementById('id_stock_cantidad'),
+        errorElem: null,
+        validar() {
+          if (!this.input) return "";
+          const val = parseInt(this.input.value);
+          if (isNaN(val) || val < 0) return "El stock debe ser 0 o mayor.";
+          return "";
+        },
+      },
+     tallas: {
+    input: form.querySelector('[name="tallas_disponibles"]'),
+    errorElem: null,
+    validar() {
+      const val = this.input.value;
+      if (!val.trim()) return "Las tallas no pueden estar vacías.";
+      if (/^\s|\s$/.test(val))
+        return "Las tallas no pueden tener espacios al inicio o final.";
+      // Permite letras, números, espacios y comas, pero no al inicio o final
+      if (!/^([a-zA-Z0-9]+(\s*,\s*[a-zA-Z0-9]+)*)$/.test(val))
+        return "Las tallas solo pueden contener letras, números, comas y espacios intermedios.";
+      return "";
+    },
+  },
+
+colores: {
+  input: form.querySelector('[name="colores_disponibles"]'),
+  errorElem: null,
+  validar() {
+    const val = this.input.value;
+    if (!val.trim()) return "Los colores no pueden estar vacíos.";
+    if (/^\s|\s$/.test(val))
+      return "Los colores no pueden tener espacios al inicio o final.";
+    // ✅ Permite letras (con acentos o ñ), espacios dentro del color y comas separadoras
+    if (!/^([a-zA-ZáéíóúÁÉÍÓÚñÑ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+)*(\s*,\s*[a-zA-ZáéíóúÁÉÍÓÚñÑ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+)*)*)$/.test(val))
+      return "Los colores solo pueden contener letras, espacios dentro del nombre y comas intermedias.";
+    return "";
+  },
+},
+
+    };
+
+    // Asociar <small> de errores
+    for (const key in campos) {
+      const input = campos[key].input;
+      if (!input) {
+        campos[key].errorElem = null;
+        continue;
+      }
+      const parent = input.parentElement || input.closest('.form-group');
+      campos[key].errorElem = parent ? parent.querySelector(".error-message") : null;
+    }
+
+    // Validar un campo individual
+    function validarCampo(campo) {
+      try {
+        const errorMsg = campo.validar();
+        const hasErrorElem = !!campo.errorElem;
+        const hasInput = !!campo.input;
+        if (errorMsg) {
+          if (hasErrorElem) {
+            campo.errorElem.textContent = errorMsg;
+            campo.errorElem.style.display = "block";
+          }
+          if (hasInput && campo.input.classList) campo.input.classList.add("input-error");
+          return false;
+        } else {
+          if (hasErrorElem) {
+            campo.errorElem.textContent = "";
+            campo.errorElem.style.display = "none";
+          }
+          if (hasInput && campo.input.classList) campo.input.classList.remove("input-error");
+          return true;
+        }
+      } catch (e) {
+        // Si cualquier validación lanza, no bloquear el submit; marcar como inválido por precaución
+        console.warn('validarCampo error', e);
+        return false;
+      }
+    }
+
+    // Validación en tiempo real (excepto código que va con AJAX)
+    for (const key in campos) {
+      if (key === "codigo") continue;
+      const campo = campos[key];
+      if (!campo.input) continue;
+      campo.input.addEventListener("input", () => validarCampo(campo));
+      if (campo.input.tagName === "SELECT") {
+        campo.input.addEventListener("change", () => validarCampo(campo));
+      }
+    }
+
+    // Validación AJAX para el código
+    const codigoInput = campos.codigo.input;
+    const codigoCampo = campos.codigo;
+    let codigoTimeout = null;
+
+    codigoInput.addEventListener("input", () => {
+      const baseError = codigoCampo.validar();
+      if (baseError) {
+        codigoCampo.errorElem.textContent = baseError;
+        codigoCampo.errorElem.style.display = "block";
+        codigoCampo.input.classList.add("input-error");
+        return;
+      } else {
+        codigoCampo.errorElem.textContent = "";
+        codigoCampo.errorElem.style.display = "none";
+        codigoCampo.input.classList.remove("input-error");
+      }
+
+      clearTimeout(codigoTimeout);
+      codigoTimeout = setTimeout(() => {
+        fetch(
+          `/validar-codigo/?codigo=${encodeURIComponent(codigoInput.value)}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.existe) {
+              codigoCampo.errorElem.textContent = "Este código ya está en uso.";
+              codigoCampo.errorElem.style.display = "block";
+              codigoCampo.input.classList.add("input-error");
+            } else {
+              codigoCampo.errorElem.textContent = "";
+              codigoCampo.errorElem.style.display = "none";
+              codigoCampo.input.classList.remove("input-error");
+            }
+          })
+          .catch(() => {
+            codigoCampo.errorElem.textContent = "";
+            codigoCampo.errorElem.style.display = "none";
+            codigoCampo.input.classList.remove("input-error");
+          });
+      }, 500);
+    });
+
+    // Mostrar nombres de imágenes seleccionadas
+    const imagenesInput = document.getElementById("imagenes");
+    if (imagenesInput) {
+      imagenesInput.addEventListener("change", () => {
+        const files = Array.from(imagenesInput.files);
+        if (files.length) {
+          const nombres = files.map((f) => f.name).join(", ");
+          Swal.fire({
+            icon: "info",
+            title: "Imágenes seleccionadas",
+            text: nombres,
+            timer: 3000,
+            showConfirmButton: false,
+          });
+        }
+      });
+    }
+
+    // Submit del formulario
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      let todoValido = true;
+      for (const key in campos) {
+        const campo = campos[key];
+        const valido = validarCampo(campo);
+        if (!valido) todoValido = false;
+      }
+      if (campos.codigo.errorElem && campos.codigo.errorElem.style.display === "block") {
+        todoValido = false;
+      }
+
+      if (!todoValido) {
+        Swal.fire({
+          icon: "error",
+          title: "Formulario inválido",
+          text: "Por favor corrige los campos resaltados en rojo.",
+        });
+        return;
+      }
+
+      // Detectar si es edición o agregado
+      const esEdicion = !!form.querySelector('[name="producto_id"]');
+
+      // Cambiar el mensaje según el caso; al cerrar la alerta (confirm o timer) se envía el form.
+      // Si por alguna razón SweetAlert falla, hacemos submit directo para no bloquear la acción.
+      try {
+        Swal.fire({
+          icon: "success",
+          title: esEdicion
+            ? "Producto actualizado exitosamente"
+            : "Producto agregado exitosamente",
+          showConfirmButton: true,
+          confirmButtonText: "Aceptar",
+          timer: 1500,
+          timerProgressBar: true
+        }).then(() => {
+          console.log('SweetAlert confirmado, enviando form...');
+          form.submit();
+        });
+      } catch (e) {
+        console.warn('SweetAlert fallo, enviando formulario directamente', e);
+        form.submit();
+      }
+    });
+
+    // Mostrar el menú si se está editando
+    if (document.getElementById("mostrarMenu").value === "true") {
+      toggleMenu(true);
+    }
+  });
+
+  // Función para abrir/cerrar el menú
+  function toggleMenu(show) {
+    const overlay = document.getElementById("overlay");
+    const menu = document.getElementById("addMenu");
+    if (show) {
+      overlay.classList.add("show");
+      menu.classList.add("show");
+    } else {
+      overlay.classList.remove("show");
+      menu.classList.remove("show");
+    }
+  }
+
+  // ==========================
+  // Eliminar producto
+  // ==========================
+  const botonesEliminar = document.querySelectorAll(".btn-eliminar");
+
+  botonesEliminar.forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      const url = this.getAttribute("href"); // la URL de eliminación
+
+      Swal.fire({
+        title: "¿Estás seguro?",
+        text: "No podrás revertir esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            icon: "success",
+            title: "Producto eliminado",
+            showConfirmButton: false,
+            timer: 1200,
+          }).then(() => {
+            // Redirige a la URL de eliminación
+            window.location.href = url;
+          });
+        }
+      });
+    });
+  });
+
+  // Carrusel
+  function moveSlide(productId, direction) {
+    const carousel = document.querySelector(`#carousel${productId}`);
+    const items = carousel.querySelectorAll(".carousel-item");
+    let activeIndex = Array.from(items).findIndex((item) =>
+      item.classList.contains("active")
+    );
+
+    items[activeIndex].classList.remove("active");
+
+    let nextIndex = activeIndex + direction;
+    if (nextIndex < 0) nextIndex = items.length - 1;
+    if (nextIndex >= items.length) nextIndex = 0;
+
+    items[nextIndex].classList.add("active");
+  }
+</script>
+<script>
+  // Notificaciones de productos agotados — lee JSON seguro inyectado por json_script
+  (function(){
+    try {
+      const el = document.getElementById('outOfStockJson');
+      const outOfStock = el ? JSON.parse(el.textContent || '[]') : [];
+      const bell = document.getElementById('stockBell');
+      const bellCount = document.getElementById('stockBellCount');
+      if (!bell || !bellCount) return;
+
+      const reviewedKey = 'stock_reviewed_ids';
+      let reviewed = [];
+      try { reviewed = JSON.parse(localStorage.getItem(reviewedKey) || '[]'); } catch(e){ reviewed = []; }
+
+      const novedades = outOfStock.filter(p => !reviewed.includes(p.id));
+      if (novedades.length > 0) {
+        bellCount.style.display = 'inline-block';
+        bellCount.textContent = String(novedades.length);
+      } else {
+        bellCount.style.display = 'none';
+      }
+
+      bell.addEventListener('click', function(){
+        if (outOfStock.length === 0) {
+          Swal.fire({ icon: 'success', title: 'Todo bien', text: 'No hay productos agotados.' });
+          return;
+        }
+        const lines = outOfStock.map(p => `<li style="text-align:left;padding:6px 0;border-bottom:1px solid #eee;"><strong>${p.nombre}</strong> <br/><small>Código: ${p.codigo}</small></li>`).join('');
+        Swal.fire({
+          title: 'Productos agotados',
+          html: `<div style="max-height:300px;overflow:auto;text-align:left;"><ul style="list-style:none;padding-left:0;margin:0">${lines}</ul></div>`,
+          showCancelButton: true,
+          confirmButtonText: 'Marcar como revisados',
+          cancelButtonText: 'Cerrar',
+          width: 600
+        }).then(result => {
+          if (result.isConfirmed) {
+            const ids = outOfStock.map(p => p.id);
+            reviewed = Array.from(new Set([...reviewed, ...ids]));
+            try { localStorage.setItem(reviewedKey, JSON.stringify(reviewed)); } catch(e) { console.warn('No se pudo guardar reviewed', e); }
+            bellCount.style.display = 'none';
+            Swal.fire({ icon: 'success', title: 'Marcados', text: 'Los productos han sido marcados como revisados.' });
+          }
+        });
+      });
+    } catch(e) { console.warn('stock notifications init error', e); }
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'agregarProducto.html' %}
+{% load humanize %}
+{% block content %}
+<style>
+    /* Estilos para la página de detalle de producto */
+    
+.producto-detalle {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.producto-info {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.producto-info h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #333;
+  text-align: center;
+}
+
+.producto-info p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.producto-info strong {
+  color: #333;
+}
+
+.button-group {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.btn-volver {
+  padding: 0.6rem 1.2rem;
+  background-color: #3498db;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1rem;
+  display: inline-block;
+  transition: background-color 0.3s;
+}
+
+.btn-volver:hover {
+  background-color: #2980b9;
+}
+
+@media (max-width: 768px) {
+  .producto-detalle {
+    padding: 1rem;
+  }
+
+  .producto-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .producto-info p {
+    font-size: 0.9rem;
+  }
+}
+
+</style>
+<div class="producto-detalle">
+  <div class="producto-info">
+    <h2>{{ producto.nombre_producto }}</h2>
+    <p><strong>Codigo:</strong> {{ producto.codigo_producto }}</p>
+    <p style="white-space: pre-wrap;"><strong>Descripción:</strong> {{ producto.descripcion_producto }}</p>
+    <p><strong>Valor:</strong> ${{ producto.valor_producto|intcomma }} Cop</p>
+  <p><strong>Cantidad:</strong> {% if producto.stock %}{{ producto.stock.cantidad }}{% else %}{{ producto.cantidad_producto|default:'-' }}{% endif %}</p>
+  <p><strong>Categoría:</strong> {% if producto.categoria %}{{ producto.categoria.nombre }}{% else %}{{ producto.categoria_producto }}{% endif %}</p>
+    <p><strong>Tallas disponibles:</strong> {{ producto.tallas_disponibles }}</p>
+    <p><strong>Colores disponibles:</strong> {{ producto.colores_disponibles }}</p>
+    <p><strong>Marca:</strong> {{ producto.marca.nombre }}</p>    
+    <p><strong>Proveedor:</strong> {{ producto.proveedor }}</p>
+    
+
+
+    <div class="button-group">
+     <a href="javascript:history.back()" class="btn-volver">Volver</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

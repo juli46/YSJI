@@ -1,0 +1,549 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Basic -->
+
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Site Metas -->
+    <title>Contáctenos</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <!-- Site Icons -->
+    <link rel="shortcut icon" href="{% static 'images/icon.png' %}" />
+    <link
+      rel="apple-touch-icon"
+      href="{% static 'images/apple-touch-icon.png' %}"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href=" {% static 'css/responsive.css' %}" />
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="main-top" style="background: #000">
+      <div class="container-fluid px-0">
+        <div class="row">
+          <div class="col-12 px-0">
+            <div
+              class="d-flex align-items-center"
+              style="
+                height: 38px;
+                justify-content: flex-start;
+                padding-left: 2vw;
+              "
+            >
+              {% if sesion_activa %}
+              <a
+                href="{% if usuario.rol == 'admin' %}{% url 'dashboard' %}{% else %}{% url 'cuenta' %}{% endif %}"
+                class="d-flex align-items-center text-white text-decoration-none"
+                style="font-weight: 600; margin-right: 24px"
+              >
+                {% if usuario.imagen_perfil %}
+                <img
+                  src="{{ usuario.imagen_perfil.url }}"
+                  alt="Perfil"
+                  style="
+                    width: 28px;
+                    height: 28px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    border: 1.5px solid #fff;
+                    margin-right: 8px;
+                  "
+                />
+                {% else %}
+                <img
+                  src="{% static 'images/user-default.png' %}"
+                  alt="Perfil"
+                  style="
+                    width: 28px;
+                    height: 28px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    border: 1.5px solid #fff;
+                    margin-right: 8px;
+                  "
+                />
+                {% endif %} MI CUENTA
+              </a>
+              {% else %}
+              <a
+                href="{% url 'login' %}"
+                class="d-flex align-items-center text-white text-decoration-none"
+                style="font-weight: 600; margin-right: 24px"
+              >
+                MI CUENTA
+              </a>
+              {% endif %}
+              <span
+                style="
+                  color: #fff;
+                  opacity: 0.55;
+                  font-size: 1.3em;
+                  margin-right: 24px;
+                "
+                >|</span
+              >
+              <a
+                href="https://www.google.com/maps/place/SENA+-+Centro+de+Tecnolog%C3%ADa+de+la+Manufactura+Avanzada/@6.302048,-75.5734267,17z/data=!4m6!3m5!1s0x8e442f25d6670d4d:0x8043999e5e767b96!8m2!3d6.302048!4d-75.5685611!16s%2Fg%2F1trqj853?entry=ttu&g_ep=EgoyMDI1MDYyMy4yIKXMDSoASAFQAw%3D%3D"
+                class="text-white text-decoration-none"
+                style="font-weight: 500; margin-right: 24px"
+                >NUESTRA UBICACIÓN</a
+              >
+              <span
+                style="
+                  color: #fff;
+                  opacity: 0.55;
+                  font-size: 1.3em;
+                  margin-right: 24px;
+                "
+                >|</span
+              >
+              <span
+                class="text-white"
+                style="font-weight: 500; margin-right: 24px"
+                >LLÁMANOS: +57 3312281046</span
+              >
+              <span
+                style="
+                  color: #fff;
+                  opacity: 0.55;
+                  font-size: 1.3em;
+                  margin-right: 24px;
+                "
+                >|</span
+              >
+              <span
+                class="text-white"
+                style="font-weight: 500; margin-right: 24px"
+                >COP</span
+              >
+              <span
+                style="
+                  color: #fff;
+                  opacity: 0.55;
+                  font-size: 1.3em;
+                  margin-right: 24px;
+                "
+                >|</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Main Top -->
+
+    <!-- Start Main Top -->
+    <header class="main-header">
+      <!-- Start Navigation -->
+      <nav
+        class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav"
+      >
+        <div class="container">
+          <!-- Start Header Navigation -->
+          <div class="navbar-header">
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbar-menu"
+              aria-controls="navbars-rs-food"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" href="{% url 'index' %}"
+              ><img
+                src="{% static 'images/logo.jpg' %}"
+                width="180px"
+                wclass="logo"
+                alt=""
+            /></a>
+          </div>
+          <!-- End Header Navigation -->
+
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="navbar-menu">
+            <ul
+              class="nav navbar-nav ml-auto"
+              data-in="fadeInDown"
+              data-out="fadeOutUp"
+            >
+              <li class="nav-item active">
+                <a class="nav-link" href="{% url 'index' %}">Inicio</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'SobreNosotros' %}"
+                  >Sobre nosotros</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'Catalogo' %}">Catálogo</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'Contactenos' %}"
+                  >Contactanos</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- /.navbar-collapse -->
+        </div>
+      </nav>
+      <!-- End Navigation -->
+    </header>
+    <!-- End Main Top -->
+
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>Contáctenos</h2>
+            <ul class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="{% url 'index' %}">Inicio</a>
+              </li>
+              <li class="breadcrumb-item active">Contactanos</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End All Title Box -->
+
+    <!-- Start Contact Us  -->
+    <div class="contact-box-main">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-sm-12">
+            <div class="contact-info-left">
+              <h2>Informacion De Contacto</h2>
+              <p>
+                En este apartado, te invitamos a ponerte en contacto con
+                nosotros para resolver cualquier duda, inconveniente o
+                incertidumbre que puedas tener. Estamos completamente dispuestos
+                a ofrecerte una solución rápida y eficaz, garantizando una
+                experiencia satisfactoria.
+              </p>
+              <ul>
+                <li>
+                  <p>
+                    <i class="fas fa-phone-square"></i>Celular:
+                    <a href="tel:+1-888705770">+57 987 886 134</a>
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    <i class="fas fa-envelope"></i>Correo:
+                    <a href="mailto:contactinfo@gmail.com"
+                      >YSJIfashion@gmail.com</a
+                    >
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-8 col-sm-12 mx-auto">
+            <div class="contact-form-right">
+              <h2 class="text-center mb-4">Ponte en Contacto</h2>
+
+              {% if enviado %}
+              <div class="alert alert-success text-center">
+                ¡Mensaje enviado correctamente!
+              </div>
+              {% endif %}
+              <form method="POST" action="{% url 'contacto' %}" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                  {{ form.nombre.label_tag }} {{ form.nombre }}
+                  <div class="text-danger">{{ form.nombre.errors }}</div>
+                </div>
+                <div class="mb-3">
+                  {{ form.correo.label_tag }} {{ form.correo }}
+                  <div class="text-danger">{{ form.correo.errors }}</div>
+                </div>
+                <div class="mb-3">
+                  {{ form.telefono.label_tag }} {{ form.telefono }}
+                  <div class="text-danger">{{ form.telefono.errors }}</div>
+                </div>
+                <div class="mb-3">
+                  {{ form.mensaje.label_tag }} {{ form.mensaje }}
+                  <div class="text-danger">{{ form.mensaje.errors }}</div>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">
+                    Enviar Mensaje
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Cart -->
+
+    <!-- Start Instagram Feed  -->
+    <div class="instagram-box">
+      <div class="main-instagram owl-carousel owl-theme">
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/o.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/p.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/q.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/cc.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/bb.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/aa.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/zz.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/t.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/s.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/y.jpg' %}" class="slide" alt="" />
+            <div class="hov-in">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector("form");
+        const nombre = form.querySelector('[name="nombre"]');
+        const correo = form.querySelector('[name="correo"]');
+        const telefono = form.querySelector('[name="telefono"]');
+        const mensaje = form.querySelector('[name="mensaje"]');
+
+        function validarNombre() {
+          const val = nombre.value.trim();
+          if (val === "") {
+            return { valido: true, valor: "anonimo" }; // Vacío es permitido, se reemplaza
+          }
+          const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$/;
+          if (!regex.test(val)) {
+            return {
+              valido: false,
+              error:
+                "El nombre solo puede contener letras sin espacios ni números.",
+            };
+          }
+          return { valido: true, valor: val };
+        }
+
+        function validarCorreo() {
+          const val = correo.value.trim();
+          const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!regex.test(val)) {
+            return {
+              valido: false,
+              error: "Ingrese un correo electrónico válido.",
+            };
+          }
+          return { valido: true };
+        }
+
+        function validarTelefono() {
+          const val = telefono.value.trim();
+          const regex = /^\d{10}$/;
+          if (!regex.test(val)) {
+            return {
+              valido: false,
+              error: "El teléfono debe contener exactamente 10 dígitos.",
+            };
+          }
+          return { valido: true };
+        }
+
+        function validarMensaje() {
+          const val = mensaje.value.trim();
+          if (val.length < 10) {
+            return {
+              valido: false,
+              error: "El mensaje debe tener al menos 10 caracteres.",
+            };
+          }
+          return { valido: true };
+        }
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          // Validaciones
+          const nombreVal = validarNombre();
+          const correoVal = validarCorreo();
+          const telefonoVal = validarTelefono();
+          const mensajeVal = validarMensaje();
+
+          if (!nombreVal.valido) {
+            Swal.fire("Error en el Nombre", nombreVal.error, "error");
+            return;
+          }
+          if (!correoVal.valido) {
+            Swal.fire("Error en el Correo", correoVal.error, "error");
+            return;
+          }
+          if (!telefonoVal.valido) {
+            Swal.fire("Error en el Teléfono", telefonoVal.error, "error");
+            return;
+          }
+          if (!mensajeVal.valido) {
+            Swal.fire("Error en el Mensaje", mensajeVal.error, "error");
+            return;
+          }
+
+          // Si nombre está vacío, cambiar a anonimo
+          if (nombre.value.trim() === "") {
+            nombre.value = "anonimo";
+          }
+
+          // Si pasa todas las validaciones, enviar el formulario
+          form.submit();
+        });
+      });
+    </script>
+
+    <!-- End Instagram Feed  -->
+    <footer class="footer">
+      <div class="container">
+        <!-- Logo -->
+        <div class="footer-logo">
+          <h2>YSJI FASHION</h2>
+        </div>
+
+        <!-- Links -->
+        <div class="footer-menu">
+          <a href="{% url 'index' %}">Inicio</a>
+          <a href="{% url 'Catalogo' %}">Catálogo</a>
+          <a href="{% url 'SobreNosotros' %}">Sobre Nosotros</a>
+          <a href="{% url 'Contactenos' %}">Contactanos</a>
+          <a href="#">Políticas</a>
+        </div>
+
+        <!-- Redes Sociales -->
+        <div class="footer-social">
+          <a href="https://www.facebook.com/" target="_blank"
+            ><i class="fab fa-facebook-f"></i
+          ></a>
+          <a href="https://www.instagram.com/" target="_blank"
+            ><i class="fab fa-instagram"></i
+          ></a>
+          <a href="https://www.pinterest.com/" target="_blank"
+            ><i class="fab fa-pinterest-p"></i
+          ></a>
+          <a href="https://wa.me/573001112233" target="_blank"
+            ><i class="fab fa-whatsapp"></i
+          ></a>
+        </div>
+
+        <!-- Derechos -->
+        <div class="footer-bottom">
+          <p>© 2024 YSJI FASHION · Todos los derechos reservados</p>
+        </div>
+      </div>
+    </footer>
+
+    <a href="#" id="back-to-top" title="Subir" style="display: none">&uarr;</a>
+
+    <!-- ALL JS FILES -->
+    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- ALL PLUGINS -->
+    <script src="{% static 'js/jquery.superslides.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-select.js' %}"></script>
+    <script src="{% static 'js/inewsticker.js' %}"></script>
+    <script src="{% static 'js/bootsnav.js.' %}"></script>
+    <script src="{% static 'js/images-loded.min.js' %}"></script>
+    <script src="{% static 'js/isotope.min.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/baguetteBox.min.js' %}"></script>
+    <script src="{% static 'js/form-validator.min.js' %}"></script>
+
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script src="{% static 'js/conta.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+</html>

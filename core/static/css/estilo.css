@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#productos, #carrito {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+}
+
+.producto {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.boton-agregar, .boton-quitar, .boton-aumentar, .boton-disminuir {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+.boton-agregar:hover, .boton-quitar:hover, .boton-aumentar:hover, .boton-disminuir:hover {
+    background-color: #45a049;
+}
+
+.cantidad {
+    display: flex;
+    align-items: center;
+}

@@ -1,0 +1,126 @@
+{% extends 'dashboard_base.html' %} {% block content %}
+<!-- Bootstrap CSS  -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+<!-- Bootstrap Icons -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+  rel="stylesheet"
+/>
+
+<div class="container">
+  <div class="d-flex">
+  <form method="get" class="row g-2 mb-4">
+    <div class="col-sm-2">
+      <input type="text" name="id" class="form-control" placeholder="ID"
+        value="{{ filtros.id }}">
+    </div>
+    <div class="col-sm-2">
+      <input type="text" name="nombre" class="form-control" placeholder="Nombre"
+        value="{{ filtros.nombre }}">
+    </div>
+    <div class="col-sm-2">
+      <input type="text" name="correo" class="form-control" placeholder="Correo"
+        value="{{ filtros.correo }}">
+    </div>
+    <div class="col-sm-2">
+      <input type="text" name="rol" class="form-control" placeholder="Rol"
+        value="{{ filtros.rol }}">
+    </div>
+    <div class="col-sm-2">
+      <button class="btn btn-dark w-100" type="submit">Buscar</button>
+    </div>
+  </form>
+</div>
+  <div class="card shadow border-0">
+    <div
+      class="card-header bg-gold text-white d-flex justify-content-between align-items-center rounded-top-lg"
+    >
+      <h4 class="mb-0">Usuarios Registrados</h4>
+      <a
+        href="{% url 'usuario_agregar' %}"
+        class="btn btn-success btn-sm fw-bold text-white"
+      >
+        <i class="bi bi-person-plus-fill"></i> Agregar Usuario
+      </a>
+    </div>
+      <div class="table-responsive" style="margin-top: -20px;">
+        <table class="table table-striped table-hover mb-0 align-middle">
+          <thead class="text-white" style="background-color: #000000">
+            <tr>
+              <th class="text-center">#</th>
+              <th class="text-start">Nombre</th>
+              <th class="text-start">Correo</th>
+              <th class="text-center">Rol</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+              <td class="text-center align-middle">{{ usuario.id }}</td>
+              <td class="text-start align-middle">{{ usuario.nombre }}</td>
+              <td class="text-start align-middle">{{ usuario.correo }}</td>
+              <td class="text-center align-middle">
+                {% if usuario.rol == "admin" %}
+                <span
+                  class="badge border border-2 border-gold text-gold fw-semibold"
+                  >Administrador</span
+                >
+                {% else %}
+                <span
+                  class="badge border border-secondary text-secondary fw-semibold"
+                  >Usuario</span
+                >
+                {% endif %}
+              </td>
+              <td class="text-center align-middle">
+                <div class="d-flex justify-content-center gap-2">
+                  <a
+                    href="{% url 'usuario_editar' usuario.id %}"
+                    class="btn btn-sm btn-outline-info"
+                    title="Editar"
+                  >
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                  <a
+                    href="{% url 'usuario_eliminar' usuario.id %}"
+                    class="btn btn-sm btn-outline-danger"
+                    title="Eliminar"
+                  >
+                    <i class="bi bi-trash-fill"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">
+                No se encontraron Usuarios con esos criterios.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bg-gold {
+    background-color: #000000 !important;
+    color: white !important;
+  }
+
+  .border-gold {
+    border-color: #d4af37 !important;
+  }
+
+  .text-gold {
+    color: #d4af37 !important;
+  }
+</style>
+{% endblock %}

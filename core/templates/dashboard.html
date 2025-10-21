@@ -1,0 +1,354 @@
+{% extends 'dashboard_base.html' %}
+{% load humanize %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+:root{
+  --accent-dark: #0f172a;
+  --accent-gold: #111827; /* cambiado de naranja a negro */
+  --muted: #6b7280;
+  --card-bg: #ffffff;
+  --shadow: 0 8px 28px rgba(15,23,42,0.06);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+.container { max-width:1200px; margin:18px auto; padding:18px; }
+
+/* Topbar */
+.topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+.title h1{ margin:0; font-size:20px; color:var(--accent-dark); }
+.title p{ margin:4px 0 0; color:var(--muted); font-size:13px; }
+
+/* Actions */
+.actions { display:flex; gap:8px; align-items:center; }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; background:var(--accent-gold); color:#fff; border-radius:8px; text-decoration:none; font-weight:700; border:none; cursor:pointer; box-shadow:var(--shadow); }
+.btn.secondary { background:var(--accent-dark); color:#fff; }
+.btn.ghost { background:transparent; border:1px solid #e6e6e6; color:var(--accent-dark); }
+
+/* KPIs */
+.kpis { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:14px; }
+.card { background:var(--card-bg); border-radius:12px; padding:14px; display:flex; gap:12px; align-items:center; box-shadow:var(--shadow); }
+.card .icon { width:52px; height:52px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg,#000000,#000000); font-weight:800; font-size:20px; color:#111827; }
+.card h3{ margin:0; font-size:18px; color:var(--accent-dark); }
+.card p{ margin:6px 0 0; color:var(--muted); font-size:13px; }
+
+/* Main grid */
+.main { display:grid; grid-template-columns: 2fr 1fr; gap:12px; }
+
+/* Panels */
+.panel { background:var(--card-bg); border-radius:12px; padding:12px; box-shadow:var(--shadow); }
+.chart-row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px; }
+
+/* Flow */
+.flow { display:flex; flex-direction:column; gap:8px; }
+.step { background:#fbfbfb; border-radius:10px; padding:10px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid transparent; }
+.step.active { border-left-color:var(--accent-gold); background:linear-gradient(90deg,#fff7ed,#fffaf0); }
+
+/* Recent orders */
+.recent { display:flex; flex-direction:column; gap:8px; }
+.order { display:flex; justify-content:space-between; gap:8px; padding:10px 0; border-bottom:1px dashed #f3f4f6; }
+.order .meta{ color:var(--muted); font-size:13px; }
+.order .price { font-weight:700; color:var(--accent-gold); }
+
+/* Responsive */
+@media (max-width:900px){
+  .kpis { grid-template-columns: 1fr; }
+  .main { grid-template-columns: 1fr; }
+  .chart-row { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="container">
+  <div class="topbar">
+    <div class="title">
+      <h1>Panel de control</h1>
+      <p>Resumen y actividad reciente</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn ghost" onclick="location.reload()">Refrescar</button>
+
+      <div style="position:relative;">
+        <button class="btn secondary" id="exportBtn" onclick="const m=document.getElementById('exportMenu'); m.style.display=(m.style.display==='none'?'block':'none')">Informes</button>
+        <div id="exportMenu" style="display:none; position:absolute; right:0; top:46px; background:#fff; box-shadow:var(--shadow); border-radius:8px; overflow:hidden;">
+          <a class="btn" style="display:block; padding:10px 14px; text-decoration:none; color:#ffffff;" href="{% url 'exportar_modelo_excel' 'usuarios' %}" target="_blank">Usuarios (.xlsx)</a>
+          <a class="btn" style="display:block; padding:10px 14px; text-decoration:none; color:#ffffff;" href="{% url 'exportar_modelo_excel' 'proveedores' %}" target="_blank">Proveedores (.xlsx)</a>
+          <a class="btn" style="display:block; padding:10px 14px; text-decoration:none; color:#ffffff;" href="{% url 'exportar_modelo_excel' 'productos' %}" target="_blank">Productos (.xlsx)</a>
+          <a class="btn" style="display:block; padding:10px 14px; text-decoration:none; color:#ffffff;" href="{% url 'exportar_modelo_excel' 'pedidos' %}" target="_blank">Pedidos (.xlsx)</a>
+          <a class="btn" style="display:block; padding:10px 14px; text-decoration:none; color:#ffffff;" href="{% url 'exportar_modelo_excel' 'marcas' %}" target="_blank">Marcas (.xlsx)</a>
+          <a href="{% url 'informe_ventas' %}" class="btn btn-danger"><i class="fas fa-file-pdf"></i> Generar Informe de Ventas</a>
+        
+        </div>
+      </div>
+
+      <a class="btn" href="{% url 'AgregarProducto' %}">Nuevo producto</a>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+    <!-- KPI Cards -->
+  <div class="kpis">
+    <div class="card">
+      <div class="icon">
+        <!-- Pedidos -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 id="kpi-new-orders">{{ nuevos_pedidos }}</h3>
+        <p>Nuevos pedidos</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="icon">
+        <!-- Usuarios -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 id="kpi-users">{{ total_usuarios }}</h3>
+        <p>Usuarios</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="icon">
+        <!-- Ventas -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 id="kpi-sales">${{ total_ventas|floatformat:0|intcomma }}</h3>
+        <p>Ventas totales</p>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="main">
+    <div class="panel">
+      <div class="charts">
+        <div class="chart-row">
+          <div class="panel chart-card">
+            <h4>Ventas por categoría</h4>
+            <canvas id="ventasBar" height="220"></canvas>
+          </div>
+
+          <div class="panel chart-card">
+            <h4>Producto más vendido (Top)</h4>
+            <canvas id="ventasDoughnut" height="220"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <div class="panel chart-card" style="grid-column: span 2;">
+            <h4>Nuevos usuarios (últimos 30 días)</h4>
+            <canvas id="ventasLine" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div class="panel recent">
+        <h4>Pedidos recientes</h4>
+        <div id="recent-list">
+          {% for o in recent_orders %}
+            <div class="order">
+              <div class="left">
+                <div>
+                  <strong>#{{ o.id }}</strong>
+                  <div class="meta">{{ o.usuario_nombre }} · {{ o.fecha }}</div>
+                </div>
+              </div>
+              <div class="right">
+                <div class="price">${{ o.total|floatformat:0|intcomma }}</div>
+                <div class="meta">{{ o.estado }}</div>
+              </div>
+            </div>
+          {% empty %}
+            <p class="meta">No hay pedidos recientes.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Datos iniciales embebidos -->
+<script id="labels-data" type="application/json">{{ labels_json|safe }}</script>
+<script id="ventas-data" type="application/json">{{ data_json|safe }}</script>
+
+<!-- product top -->
+<script id="product-labels" type="application/json">{{ product_labels_json|safe }}</script>
+<script id="product-data" type="application/json">{{ product_data_json|safe }}</script>
+
+<script id="line-labels" type="application/json">{{ ventas_series_labels_json|safe }}</script>
+<script id="line-data" type="application/json">{{ ventas_series_data_json|safe }}</script>
+
+<script>
+  
+/* Config: URL del API (opcional, si no usas API deja como está) */
+const API_SUMMARY_URL = "{{ dashboard_api_url|default:'/dashboard/api/summary/' }}";
+const POLL_INTERVAL_MS = 8000; // 8 segundos
+
+/* Helpers */
+function parseJSON(id){ try{ return JSON.parse(document.getElementById(id).textContent || '[]'); }catch(e){ return []; } }
+
+/* Cargar datos embebidos */
+const labels = parseJSON('labels-data');    // categorías
+const data = parseJSON('ventas-data');
+
+const productLabels = parseJSON('product-labels'); // productos top
+const productData = parseJSON('product-data');
+
+const lineLabels = parseJSON('line-labels'); // nuevos usuarios
+const lineData = parseJSON('line-data');
+
+/* Paleta: reemplacé el naranja por negro (#111827) */
+const palette = ['#36A2EB','#FF6384','#FFCE56','#4BC0C0','#9966FF','#111827','#00C49F'];
+
+let barChart, doughnutChart, lineChart;
+function initCharts(){
+  const ctxBar = document.getElementById('ventasBar').getContext('2d');
+  barChart = new Chart(ctxBar, {
+    type:'bar',
+    data:{ labels, datasets:[{ label:'Ventas', data, backgroundColor: labels.map((_,i)=> palette[i%palette.length]), borderColor:'#111827', borderWidth:1 }] },
+    options:{ plugins:{ legend:{display:false} }, scales:{ y:{ ticks:{ callback: v => '$' + v.toLocaleString('es-CO') } } } }
+  });
+
+  const ctxD = document.getElementById('ventasDoughnut').getContext('2d');
+  doughnutChart = new Chart(ctxD, {
+    type:'doughnut',
+    data:{
+      labels: productLabels.length ? productLabels : labels,
+      datasets:[{
+        data: productData.length ? productData : data,
+        backgroundColor: (productLabels.length ? productLabels : labels).map((_,i)=> palette[i%palette.length])
+      }]
+    },
+    options:{
+      plugins:{
+        legend:{ position:'bottom' },
+        tooltip:{
+          callbacks:{
+            label: ctx => {
+              const v = ctx.raw||0;
+              const ds = ctx.dataset || {};
+              const total = (doughnutChart && doughnutChart._metasets) ? doughnutChart._metasets[0].total : (productData.length ? productData : data).reduce((a,b)=>a+b,0);
+              const pct = total ? ((v/total)*100).toFixed(1) : 0;
+              return `${ctx.label}: ${v.toLocaleString('es-CO')} unidades (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  const ctxL = document.getElementById('ventasLine').getContext('2d');
+  lineChart = new Chart(ctxL, {
+    type:'line',
+    data:{ labels: lineLabels, datasets:[{ label:'Nuevos usuarios', data: lineData, borderColor:'#111827', backgroundColor:'rgba(17,24,39,0.06)', fill:true, tension:0.2 }] },
+    options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ ticks:{ callback: v => v.toLocaleString('es-CO') } } } }
+  });
+}
+
+/* Update DOM helpers */
+function updateKPI(selector, value, isMoney=false){
+  const el = document.getElementById(selector);
+  if(!el) return;
+  if(isMoney) el.textContent = '$' + Number(value||0).toLocaleString('es-CO');
+  else el.textContent = value;
+}
+function updatePipeline(p){
+  const keys = { Nuevo:['step-nuevo','count-nuevo','val-nuevo'], Procesando:['step-proc','count-proc','val-proc'], Enviado:['step-enviado','count-enviado','val-enviado'], Entregado:['step-entregado','count-entregado','val-entregado'] };
+  for(const k in keys){
+    const [stepId,countId,valId] = keys[k];
+    const v = p[k] || 0;
+    const stepEl = document.getElementById(stepId);
+    if(stepEl) stepEl.classList.toggle('active', v>0);
+    if(document.getElementById(countId)) document.getElementById(countId).textContent = v + ' pedidos';
+    if(document.getElementById(valId)) document.getElementById(valId).textContent = v;
+  }
+}
+function renderRecent(list){
+  const wrap = document.getElementById('recent-list');
+  if(!wrap) return;
+  if(!Array.isArray(list) || list.length===0){ wrap.innerHTML = '<p class=\"meta\">No hay pedidos recientes.</p>'; return; }
+  wrap.innerHTML = '';
+  for(const o of list){
+    const div = document.createElement('div'); div.className='order';
+    div.innerHTML = `<div class="left"><div><strong>#${o.id}</strong><div class="meta">${o.usuario_nombre} · ${o.fecha}</div></div></div>
+      <div class="right"><div class="price">$${Number(o.total||0).toLocaleString('es-CO')}</div><div class="meta">${o.estado}</div></div>`;
+    wrap.appendChild(div);
+  }
+}
+
+/* Update charts with new arrays */
+function updateCharts(newLabels, newData, newLineLabels, newLineData){
+  if(barChart){
+    barChart.data.labels = newLabels;
+    barChart.data.datasets[0].data = newData;
+    barChart.data.datasets[0].backgroundColor = newLabels.map((_,i)=> palette[i%palette.length]);
+    barChart.update();
+  }
+  if(doughnutChart){
+    // update doughnut to use product data if available, otherwise categories
+    const useProduct = (Array.isArray(productLabels) && productLabels.length>0);
+    doughnutChart.data.labels = useProduct ? productLabels : newLabels;
+    doughnutChart.data.datasets[0].data = useProduct ? productData : newData;
+    doughnutChart.data.datasets[0].backgroundColor = (useProduct ? productLabels : newLabels).map((_,i)=> palette[i%palette.length]);
+    doughnutChart.update();
+  }
+  if(lineChart){
+    lineChart.data.labels = newLineLabels;
+    lineChart.data.datasets[0].data = newLineData;
+    lineChart.update();
+  }
+}
+
+/* Polling: fetch summary and apply updates (opcional: tu vista puede no exponer API; si no usas API, esto fallará en 404 y simplemente se reintentará) */
+let pollTimer = null;
+async function fetchAndUpdate(){
+  try{
+    const res = await fetch(API_SUMMARY_URL, { credentials:'same-origin' });
+    if(!res.ok) return;
+    const json = await res.json();
+    // expected json keys: nuevos_pedidos, total_usuarios, total_ventas, labels, data, line_labels, line_data, pipeline, recent_orders
+    updateKPI('kpi-new-orders', json.nuevos_pedidos);
+    updateKPI('kpi-users', json.total_usuarios);
+    updateKPI('kpi-sales', json.total_ventas, true);
+    updatePipeline(json.pipeline || {});
+    renderRecent(json.recent_orders || []);
+    updateCharts(json.labels || [], json.data || [], json.line_labels || [], json.line_data || []);
+  }catch(e){
+    // fail silently (no romper UI)
+    // console.error('dashboard poll error', e);
+  }finally{
+    pollTimer = setTimeout(fetchAndUpdate, POLL_INTERVAL_MS);
+  }
+}
+
+/* Init */
+document.addEventListener('DOMContentLoaded', function(){
+  initCharts();
+  // Start polling only if an API path is configured and you want live updates.
+  // If you're using the server-rendered (sin API) version, el polling puede dejarse o comentarse.
+  setTimeout(fetchAndUpdate, 1200);
+});
+</script>
+
+{% endblock %}

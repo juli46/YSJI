@@ -1,0 +1,217 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pago - YSJI FASHION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        body { background: #f8f9fa; }
+        .card-payment {
+            max-width: 430px;
+            margin: 50px auto 0 auto;
+            border-radius: 20px;
+            box-shadow: 0 6px 32px rgba(0,0,0,0.11);
+            border: none;
+        }
+        .credit-card-visual {
+            background: linear-gradient(120deg, #0d6efd 60%, #55a7f3 100%);
+            border-radius: 16px;
+            color: #fff;
+            padding: 20px 24px 18px 24px;
+            margin-bottom: 22px;
+            position: relative;
+            box-shadow: 0 2px 16px rgba(13,110,253,0.13);
+        }
+        .credit-card-visual .cc-chip {
+            width: 38px;
+            height: 26px;
+            background: #fff;
+            border-radius: 7px;
+            margin-bottom: 18px;
+        }
+        .credit-card-visual .cc-number {
+            font-size: 1.15rem;
+            letter-spacing: 2.5px;
+            margin-bottom: 10px;
+        }
+        .credit-card-visual .cc-label {
+            font-size: .75rem;
+            opacity: .85;
+        }
+        .credit-card-visual .cc-footer {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end;
+            margin-top: 12px;
+        }
+        .credit-card-visual .cc-brand {
+            font-size: 2rem;
+            opacity: .9;
+        }
+        .resumen-titulo {
+            text-align: left;
+            font-size: 1.01rem;
+            font-weight: 600;
+            color: #0d6efd;
+            margin-bottom: 2px;
+            margin-top: 10px;
+        }
+        .list-group-item img {
+            border-radius: 7px;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #3079ed 60%, #56aaff 100%);
+            border: none;
+        }
+        .btn-primary:active, .btn-primary:focus, .btn-primary:hover {
+            background: linear-gradient(90deg, #245bb6 60%, #4692c7 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card card-payment p-4">
+            <!-- Tarjeta visual arriba -->
+            <div class="credit-card-visual mb-3">
+                <div class="cc-chip"></div>
+                <div class="cc-number" id="ccNumberVisual">•••• •••• •••• ••••</div>
+                <div class="cc-footer">
+                    <div>
+                        <div class="cc-label">Nombre</div>
+                        <div id="ccNameVisual" style="font-size:1.01rem;font-weight:500;">TITULAR</div>
+                    </div>
+                    <div class="cc-brand">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Resumen de compra -->
+            <div id="resumen-compra"></div>
+            <!-- Formulario -->
+            <form method="post" id="form-pago" autocomplete="off" >
+                <input type="hidden" name="carrito" id="carrito">
+                <input type="hidden" name="buynow" id="buynow" value="">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" name="nombre" class="form-control" placeholder="Como aparece en la tarjeta" required maxlength="32" id="ccNameInput">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Número de tarjeta</label>
+                    <div class="input-group">
+                        <input type="text" name="tarjeta" maxlength="19" class="form-control" placeholder="1234 5678 9012 3456" required pattern="\d{4}\s\d{4}\s\d{4}\s\d{4}" id="ccNumberInput">
+                        <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <label class="form-label">Expiración</label>
+                        <input type="text" name="expiracion" class="form-control" placeholder="MM/AA" required pattern="\d{2}/\d{2}">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="form-label">CVC</label>
+                        <input type="text" name="cvc" maxlength="4" class="form-control" placeholder="CVC" required pattern="\d{3,4}">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-2 fs-5">
+                    <i class="bi bi-lock-fill me-1"></i> Pagar ahora
+                </button>
+            </form>
+            <div class="text-center mt-3">
+                <a href="{% url 'Catalogo' %}" class="text-decoration-none text-secondary"><i class="bi bi-arrow-left"></i> Volver al catálogo</a>
+            </div>
+        </div>
+    </div>
+    <script>
+function getQueryParam(param) { 
+    let params = new URLSearchParams(window.location.search); 
+    return params.has(param); 
+}
+
+// --- Evento de envío del formulario de pago ---
+document.getElementById('form-pago').addEventListener('submit', function(e) {
+    e.preventDefault(); // detenemos el envío automático
+    let form = this;
+
+    // --- Guardamos los productos en el hidden ---
+    if (getQueryParam('buynow')) {
+        var buyNowProduct = localStorage.getItem('buyNowProduct') || '[]';
+        document.getElementById('carrito').value = buyNowProduct;
+        document.getElementById('buynow').value = "1";
+        localStorage.removeItem('buyNowProduct');
+    } else {
+        var carrito = localStorage.getItem('cart') || '[]';
+        document.getElementById('carrito').value = carrito;
+        document.getElementById('buynow').value = "";
+        localStorage.removeItem('cart');
+    }
+
+    // --- Confirmación antes de pagar ---
+    Swal.fire({
+        title: '¿Confirmar pago?',
+        text: "Se procesará tu compra con los datos ingresados.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, pagar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // ✅ Mostrar éxito y luego enviar
+            Swal.fire({
+                icon: 'success',
+                title: 'Pago realizado con éxito',
+                text: 'Gracias por tu compra en YSJI FASHION',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#0d6efd'
+            }).then(() => {
+                form.submit(); // 🔑 ahora se envía después de cerrar la alerta
+            });
+        }
+    });
+});
+
+// --- Resumen de compra bonito ---
+document.addEventListener("DOMContentLoaded", function() {
+    let resumenDiv = document.getElementById("resumen-compra");
+    let productos = [];
+    if (getQueryParam('buynow')) {
+        productos = JSON.parse(localStorage.getItem('buyNowProduct') || '[]');
+    } else {
+        productos = JSON.parse(localStorage.getItem('cart') || '[]');
+    }
+    if (productos.length > 0) {
+        let html = `<div class="resumen-titulo">Resumen de compra</div><ul class="list-group mb-2">`;
+        let total = 0;
+        productos.forEach(p => {
+            html += `<li class="list-group-item d-flex align-items-center border-0" style="background:#f9fcff;">
+                        ${p.imagen ? `<img src="${p.imagen}" style="width:45px;height:45px;object-fit:cover;margin-right:14px;">` : ''}
+                        <span class="flex-grow-1" style="font-size:1.01rem">${p.nombre} ${p.cantidad ? 'x'+p.cantidad : ''}</span>
+                        <span class="fw-bold text-primary" style="font-size:.98rem">$${Number(p.precio).toLocaleString()} COP</span>
+                     </li>`;
+            total += Number(p.precio) * (p.cantidad || 1);
+        });
+        html += `</ul><div class="text-end fw-bold text-success fs-5 mb-2">Total: $${total.toLocaleString()} COP</div>`;
+        resumenDiv.innerHTML = html;
+    }
+});
+
+// --- Tarjeta visual interactiva ---
+document.getElementById('ccNameInput').addEventListener('input', function(){
+    document.getElementById('ccNameVisual').textContent = this.value || "TITULAR";
+});
+document.getElementById('ccNumberInput').addEventListener('input', function(){
+    let val = this.value.replace(/\D/g,'').slice(0,16);
+    let formatted = val.replace(/(.{4})/g,"$1 ").trim();
+    this.value = formatted;
+    document.getElementById('ccNumberVisual').textContent = formatted.padEnd(19, "•");
+});
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
