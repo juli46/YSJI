@@ -1,0 +1,250 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header bg-gold text-white d-flex justify-content-between align-items-center rounded-top-lg">
+            <h4 class="mb-0">{{ accion }} Usuario</h4>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" id="usuario-form" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-4">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-bold text-gold">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <div class="d-flex mt-4 gap-3">
+                    <button type="submit" class="btn btn-success fw-bold shadow-sm">
+                        <i class="bi bi-pencil-square"></i> {{ accion }}
+                    </button>
+                    <button type="button" class="btn btn-danger fw-bold shadow-sm"
+                            data-href="{% url 'dashboard_usuarios' %}"
+                            onclick="window.location.href = this.dataset.href;">
+                        <i class="bi bi-x-circle me-2"></i>Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gold {
+        background-color: #000000 !important;
+        color: white !important;
+    }
+
+    .text-gold {
+        color: #000000 !important;
+    }
+
+    .form-control:focus {
+        border-color: #040404;
+        box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    /* Labels y campos en vertical sin achicar */
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    .mb-4 label {
+        display: block;
+        margin-bottom: 0.4rem;
+    }
+
+    .mb-4 .form-control,
+    .mb-4 select,
+    .mb-4 textarea {
+        width: 100%;
+        margin-bottom: 0;
+    }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("usuario-form");
+    const inputs = form.querySelectorAll("input, select, textarea");
+    const correoInput = Array.from(inputs).find(i => i.name.toLowerCase().includes("correo") || i.name.toLowerCase().includes("email"));
+
+    // Guardamos el correo original para no validar contra sí mismo
+    const correoOriginal = correoInput ? correoInput.value.trim().toLowerCase() : "";
+
+    async function correoExiste(correo) {
+        const response = await fetch(`/verificar-correo/?correo=${encodeURIComponent(correo)}`);
+        const data = await response.json();
+        return data.existe;
+    }
+
+    inputs.forEach(input => {
+        input.classList.add("form-control");
+
+        input.addEventListener("input", async () => {
+            if (input.name.toLowerCase().includes("correo") || input.name.toLowerCase().includes("email")) {
+                input.value = input.value.toLowerCase();
+                await validarCorreoEnTiempoReal(input);
+            } else {
+                validateField(input);
+            }
+        });
+    });
+
+    async function validarCorreoEnTiempoReal(input) {
+        if (!validateField(input)) return;
+
+        const correo = input.value.trim().toLowerCase();
+        if (correo !== correoOriginal && await correoExiste(correo)) {
+            showError(input, "El correo ya está registrado.");
+            input.classList.remove("is-valid");
+            input.classList.add("is-invalid");
+            return false;
+        } else {
+            clearError(input);
+            input.classList.add("is-valid");
+            return true;
+        }
+    }
+
+    form.addEventListener("submit", async function (event) {
+        let valid = true;
+
+        for (let input of inputs) {
+            if (input.name.toLowerCase().includes("correo") || input.name.toLowerCase().includes("email")) {
+                const ok = await validarCorreoEnTiempoReal(input);
+                if (!ok) valid = false;
+            } else if (!validateField(input)) {
+                valid = false;
+            }
+        }
+
+        if (!valid) {
+            event.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Formulario inválido',
+                text: 'Por favor, corrige los errores antes de continuar.',
+                confirmButtonColor: '#dc3545'
+            });
+        }
+    });
+
+    function validateField(input) {
+        clearError(input);
+        input.classList.remove("is-valid", "is-invalid");
+
+        const value = input.value.trim();
+        if (input.required && value === "") {
+            showError(input, "Este campo es obligatorio.");
+            return false;
+        }
+
+        // Validación de nombre
+        if (input.name.toLowerCase().includes("nombre")) {
+            const nombreRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ]+( [A-Za-zÁÉÍÓÚáéíóúÑñ]+)*$/;
+            if (!nombreRegex.test(value)) {
+                showError(input, "El nombre solo puede contener letras y espacios intermedios.");
+                return false;
+            }
+        }
+
+        // Validación de correo (formato)
+        if (input.name.toLowerCase().includes("correo") || input.name.toLowerCase().includes("email")) {
+            const partes = value.split("@");
+            if (partes.length !== 2) {
+                showError(input, "El correo debe contener un '@' válido.");
+                return false;
+            }
+
+            const parteLocal = partes[0];
+            const dominioCompleto = partes[1];
+            const dominio = dominioCompleto.split(".")[0];
+            const extension = dominioCompleto.split(".").slice(1).join(".");
+
+            const dominiosValidos = ["gmail", "hotmail", "outlook", "example"];
+            const extensionesValidas = ["com", "net", "org", "edu"];
+
+            if (parteLocal.length < 6) {
+                showError(input, "Debe tener al menos 6 caracteres antes del '@'.");
+                return false;
+            }
+            if (!/[a-z]/.test(parteLocal)) {
+                showError(input, "Debe contener al menos una letra antes del '@'.");
+                return false;
+            }
+            if (!/^[a-z0-9.]+$/.test(parteLocal)) {
+                showError(input, "Solo letras minúsculas, números y puntos (.) antes del '@'.");
+                return false;
+            }
+            if (!dominiosValidos.includes(dominio.toLowerCase())) {
+                showError(input, "Dominio inválido. Use gmail, hotmail, outlook o example.");
+                return false;
+            }
+            if (!extensionesValidas.includes(extension.toLowerCase())) {
+                showError(input, "Extensión inválida. Use .com, .net, .org o .edu.");
+                return false;
+            }
+        }
+
+        input.classList.add("is-valid");
+        return true;
+    }
+
+    function showError(input, message) {
+        input.classList.add("is-invalid");
+        let errorDiv = input.parentNode.querySelector(".invalid-feedback");
+        if (!errorDiv) {
+            errorDiv = document.createElement("div");
+            errorDiv.className = "invalid-feedback";
+            input.parentNode.appendChild(errorDiv);
+        }
+        errorDiv.textContent = message;
+    }
+
+    function clearError(input) {
+        let errorDiv = input.parentNode.querySelector(".invalid-feedback");
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+    }
+});
+</script>
+
+
+
+
+{% endblock %}

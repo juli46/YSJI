@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="shortcut icon" href="{% static 'images/icon.png' %}" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/boar.css'%}" />
+    <link rel="apple-touch-icon" href="{% static 'images/logo.jpg' %}" />
+    <link rel="stylesheet" href="{% static 'css/st.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/s.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/productos.css' %}" />
+    <style>
+       .admin-profile-sidebar {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px #0001;
+            margin-top: 18px;
+            padding: 10px 8px 10px 8px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark-mode .admin-profile-sidebar {
+            background: transparent;
+            color: #f1f1f1;  
+            box-shadow: 0 2px 8px #0007;
+        }
+        body.dark-mode .perfil-admin-flex .text-muted {
+            color: white;
+        }
+
+      .admin-profile-sidebar {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px #0001;
+        margin-top: 18px;
+        padding: 10px 8px 10px 8px;
+      }
+      .admin-profile-sidebar img {
+        border: 2px solid #000;
+      }
+      .perfil-admin-flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 8px;
+      }
+      .perfil-admin-flex .ms-2 {
+        margin-left: 10px;
+        line-height: 1.1;
+      }
+      .perfil-admin-flex .fw-bold {
+        font-size: 1.08em;
+        font-weight: bold;
+      }
+      .perfil-admin-flex .text-muted {
+        font-size: 0.97em;
+        color: #f3ebeb;
+      }
+      .menu-tres-puntos {
+        position: relative;
+        outline: none;
+      }
+      .menu-tres-puntos .puntos {
+        font-size: 2em;
+        cursor: pointer;
+        user-select: none;
+      }
+      .menu-tres-puntos .menu-opciones {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 32px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        min-width: 120px;
+        box-shadow: 0 2px 8px #0002;
+        z-index: 100;
+      }
+      .menu-tres-puntos:focus .menu-opciones,
+      .menu-tres-puntos:hover .menu-opciones {
+        display: block;
+      }
+      .menu-tres-puntos .menu-opciones a {
+        display: block;
+        padding: 10px 16px;
+        color: #222;
+        text-decoration: none;
+        font-size: 1em;
+        border-radius: 8px;
+        transition: background 0.2s;
+      }
+      .menu-tres-puntos .menu-opciones a:hover {
+        background: #f2f2f2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="menu">
+      <ion-icon name="menu-outline"></ion-icon>
+      <ion-icon name="close-outline"></ion-icon>
+    </div>
+    <div class="barra-lateral">
+      <div>
+        <div class="nombre-pagina">
+          <ion-icon id="cloud" name="cloud-outline"></ion-icon>
+          <span>YSJI FASHION</span>
+        </div>
+      </div>
+      <nav class="navegacion">
+        <ul>
+          <li class="{% if request.path == '/dashboard/' %}active{% endif %}">
+            <a href="{% url 'dashboard'%}">
+              <ion-icon name="grid-outline"></ion-icon>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="{% if request.path == '/usuarios/' %}active{% endif %}">
+            <a href="{% url 'dashboard_usuarios' %}">
+              <ion-icon name="person-outline"></ion-icon>
+              <span>Usuarios</span>
+            </a>
+          </li>
+          <li class="{% if request.path == '/proveedores/' %}active{% endif %}">
+            <a href="{% url 'dashboard_proveedores' %}">
+              <ion-icon name="business-outline"></ion-icon>
+              <span>Proveedores</span>
+            </a>
+          </li>
+          <li
+            class="{% if request.path == '/AgregarProducto/' %}active{% endif %}"
+          >
+            <a href="{% url 'AgregarProducto'%}">
+              <ion-icon name="shirt-outline"></ion-icon>
+              <span>Productos</span>
+            </a>
+          </li>
+          <li class="{% if request.path == '/pedidos/' %}active{% endif %}">
+            <a href="{% url 'dashboard_pedidos' %}">
+              <ion-icon name="receipt-outline"></ion-icon>
+              <span>Pedidos</span>
+            </a>
+          </li>
+            <li class="{% if request.path == '/marcas/' %}active{% endif %}">
+              <a href="{% url 'marcas_list' %}">
+                <ion-icon name="pricetags-outline"></ion-icon>
+                <span>Marcas</span>
+              </a>
+            </li>
+            <li class="{% if request.path == '/marcas/' %}active{% endif %}">
+              <a href="{% url 'dashboard_categorias' %}">
+                <ion-icon name="pricetags-outline"></ion-icon>
+                <span>Categorías</span>
+              </a>
+            </li>
+          <li class="{% if request.path == '/periodico/' %}active{% endif %}">
+            <a href="{% url 'blog_list' %}">
+              <ion-icon name="newspaper-outline"></ion-icon>
+              <span>Blog</span>
+            </a>
+          </li>
+           <li class="{% if request.path == '/mensaje/' %}active{% endif %}">
+            <a href="{% url 'dashboard_contacto' %}">
+              <ion-icon name="chatbubble-outline"></ion-icon>
+
+              <span>Mensajes</span>
+            </a>
+          </li>
+          <li class="{% if request.path == '/login/' %}active{% endif %}">
+            <a href="{% url 'logout'%}">
+              <ion-icon name="log-out-outline"></ion-icon>
+              <span>Salir</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div>
+        <div class="linea"></div>
+        <div class="modo-oscuro">
+          <div class="info">
+            <ion-icon name="moon-outline"></ion-icon>
+            <span>Modo Oscuro</span>
+          </div>
+          <div class="switch">
+            <div class="base">
+              <div class="circulo"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Perfil Admin Compacto SOLO CSS -->
+        <div class="admin-profile-sidebar text-center py-3">
+          <div class="perfil-admin-flex">
+            <div style="display: flex; align-items: center">
+              <img
+                src="{% if usuario_admin and usuario_admin.imagen_perfil %}{{ usuario_admin.imagen_perfil.url }}{% else %}{% static 'images/user-default.png' %}{% endif %}"
+                alt="Perfil"
+                style="
+                  width: 54px;
+                  height: 54px;
+                  object-fit: cover;
+                  border-radius: 50%;
+                  border: 2px solid #000;
+                "
+              />
+              <div class="ms-2 text-start">
+                <span class="fw-bold">
+                    {{ usuario_admin.nombre|default:"Admin" }}
+                </span>
+                <br />
+                <span class="text-muted">
+                    {{ usuario_admin.correo|default:"admin@correo.com" }}
+                </span>
+              </div>
+            </div>
+            <!-- Menú de 3 puntos solo CSS -->
+            <div class="menu-tres-puntos" tabindex="0">
+              <span class="puntos">&#8942;</span>
+              <div class="menu-opciones">
+                <a href="{% url 'editar_perfil' %}">Editar perfil</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <main>{% block content %}{% endblock %}</main>
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <script src="{% static 'js/das.js'%}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+  </body>
+</html>

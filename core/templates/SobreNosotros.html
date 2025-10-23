@@ -1,0 +1,334 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Metadatos básicos -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Información SEO -->
+    <meta name="description" content="YSJI FASHION - Tu tienda online de moda con descuentos increíbles">
+    <meta name="keywords" content="moda, ropa, estilo, descuentos, fashion">
+    <meta name="author" content="YSJI FASHION">
+    <!-- Título -->
+    <title>YSJI FASHION</title>
+    <!-- Logos -->
+    <link rel="shortcut icon" href="{% static 'images/icon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.jpg' %}">
+    <!-- Estilos -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+</head>
+
+<body>
+    <div class="main-top" style="background:#000;">
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-12 px-0">
+                <div class="d-flex align-items-center" style="height:38px; justify-content: flex-start; padding-left: 2vw;">
+                    {% if sesion_activa %}
+                        <a href="{% if usuario.rol == 'admin' %}{% url 'dashboard' %}{% else %}{% url 'cuenta' %}{% endif %}"
+                            class="d-flex align-items-center text-white text-decoration-none" style="font-weight:600; margin-right:24px;">
+                            {% if usuario.imagen_perfil %}
+                                <img src="{{ usuario.imagen_perfil.url }}" alt="Perfil" style="width:28px;height:28px;object-fit:cover;border-radius:50%;border:1.5px solid #fff;margin-right:8px;">
+                            {% else %}
+                                <img src="{% static 'images/user-default.png' %}" alt="Perfil" style="width:28px;height:28px;object-fit:cover;border-radius:50%;border:1.5px solid #fff;margin-right:8px;">
+                            {% endif %}
+                            MI CUENTA
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="d-flex align-items-center text-white text-decoration-none" style="font-weight:600; margin-right:24px;">
+                            MI CUENTA
+                        </a>
+                    {% endif %}
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                    <a href="https://www.google.com/maps/place/SENA+-+Centro+de+Tecnolog%C3%ADa+de+la+Manufactura+Avanzada/@6.302048,-75.5734267,17z/data=!4m6!3m5!1s0x8e442f25d6670d4d:0x8043999e5e767b96!8m2!3d6.302048!4d-75.5685611!16s%2Fg%2F1trqj853?entry=ttu&g_ep=EgoyMDI1MDYyMy4yIKXMDSoASAFQAw%3D%3D" class="text-white text-decoration-none" style="font-weight:500;margin-right:24px;">NUESTRA UBICACIÓN</a>
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                    <span class="text-white" style="font-weight:500;margin-right:24px;">LLÁMANOS: +57 3312281046</span>
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                    <span class="text-white" style="font-weight:500;margin-right:24px;">COP</span>
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+.main-top {
+    border-bottom: 1px solid #fff;
+}
+@media (max-width: 991px) {
+    .main-top .d-flex.align-items-center {
+        flex-wrap: wrap;
+        justify-content: flex-start !important;
+        gap: 8px;
+        height: auto !important;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        padding-left: 2vw !important;
+    }
+}
+</style>
+    <header class="main-header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu"
+                        aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'index' %}">
+                        <img src="{% static 'images/logo.jpg' %}" width="180px" alt="YSJI Fashion Logo">
+                    </a>
+                </div>
+                <!-- Menú de navegación principal -->
+                <div class="collapse navbar-collapse" id="navbar-menu">
+                    <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
+                        <li class="nav-item active"><a class="nav-link" href="{% url 'index' %}">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'SobreNosotros' %}">Sobre nosotros</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'Catalogo' %}">Catálogo</a></li>
+                       
+                        <li class="nav-item"><a class="nav-link" href="{% url 'Contactenos' %}">Contáctanos</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="side">
+                <a href="#" class="close-side"><i class="fa fa-times"></i></a>
+                <li class="cart-box">
+                    <ul class="cart-list">
+                    </ul>
+                </li>
+            </div>
+        </nav>
+    </header>
+    <!-- End Main Top -->
+    <!-- Start Top Search -->
+    <div class="top-search">
+      <div class="container">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-search"></i></span>
+          <input type="text" class="form-control" placeholder="Search" />
+          <span class="input-group-addon close-search"
+            ><i class="fa fa-times"></i
+          ></span>
+        </div>
+      </div>
+    </div>
+    <!-- End Top Search -->
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>Sobre Nosotros</h2>
+            <ul class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="{% url 'index' %}">Inicio</a>
+              </li>
+              <li class="breadcrumb-item active">
+                <a href="{% url 'SobreNosotros' %}">Sobre Nosotros</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End All Title Box -->
+    <!-- Start About Page  -->
+    <div class="about-box-main">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6">
+            <h2 class="noo-sh-title">Sobre Nosotros</h2>
+            <p class="text-justify">
+              Bienvenidos a YSJI Fashion, un espacio donde la moda se convierte
+              en arte y la personalización eleva cada pieza a un nivel único y
+              exclusivo. Nuestra pasión es crear productos que destaquen por su
+              calidad, diseño y atención al detalle, pensados para quienes
+              valoran la autenticidad y el lujo en cada prenda y accesorio.
+              <br /><br />
+              En nuestra tienda, encontrarás una cuidada selección de camisas,
+              bolsos, joyería y estampados, todos elaborados con los mejores
+              materiales y diseños sofisticados. Además, ofrecemos un exclusivo
+              servicio de personalización que permite a nuestros clientes
+              transformar sus ideas en creaciones únicas, reflejando su estilo y
+              personalidad de manera inigualable. <br /><br />
+              Trabajamos de la mano con proveedores selectos y un equipo de
+              profesionales dedicados a garantizar que cada producto cumpla con
+              los estándares más altos. Nuestra misión es fusionar la moda y la
+              personalización para ofrecerte piezas únicas que trascienden las
+              tendencias. <br /><br />
+              Más que una empresa, somos un movimiento que celebra la
+              individualidad y la autoexpresión a través de la moda de alta
+              gama. Únete a nuestra comunidad y descubre cómo cada detalle
+              cuenta cuando se trata de vestir tu historia.
+            </p>
+            <p class="text-justify">
+              YSJI FASHION: Elegancia y exclusividad, hechas para ti.
+            </p>
+          </div>
+          <div class="col-lg-6">
+            <div class="banner-frame">
+              <img
+                class="img-thumbnail img-fluid"
+                src="{% static 'images/SN.jpg' %}"
+                alt=""
+                style=" max-height: 600px; height: 575px; width: 444px; object-fit: cover"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row my-5">
+          <div class="col-sm-6 col-lg-4">
+            <div class="service-block-inner">
+              <h3>Somos de Confianza</h3>
+              <p>
+                En YSJI Fashion, nos comprometemos a ofrecerte productos y
+                servicios de la más alta calidad, siempre con la garantía de que
+                cada compra es una experiencia segura y satisfactoria. Nuestra
+                dedicación y atención al detalle son lo que nos convierte en una
+                empresa confiable para todos nuestros clientes.
+              </p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <div class="service-block-inner">
+              <h3>Somos Profesionales</h3>
+              <p>
+                Contamos con un equipo altamente capacitado y experimentado,
+                comprometido con ofrecerte lo mejor en cada diseño, prenda y
+                servicio de personalización. Nuestra profesionalidad se refleja
+                en cada paso que damos, asegurando que todas tus necesidades
+                sean atendidas con la máxima seriedad y dedicación.
+              </p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <div class="service-block-inner">
+              <h3>Somos Expertos</h3>
+              <p>
+                Nuestra experiencia en la industria de la moda y la
+                personalización nos permite ofrecer soluciones únicas y de
+                calidad superior. Con años de trayectoria y conocimientos
+                especializados, garantizamos que cada pieza y servicio esté a la
+                altura de tus expectativas, creando productos que no solo te
+                encantarán, sino que te harán sentir especial.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End About Page -->
+    <!-- Start Instagram Feed  -->
+    <div class="instagram-box">
+      <div class="main-instagram owl-carousel owl-theme">
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/o.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/p.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/q.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/cc.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/bb.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/aa.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/zz.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/t.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/s.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="ins-inner-box">
+            <img src="{% static 'images/y.jpg' %}" class="slide" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Instagram Feed  -->
+
+    <!-- Start Footer  -->
+<footer class="footer">
+    <div class="container">
+        <!-- Logo -->
+        <div class="footer-logo">
+            <h2>YSJI FASHION</h2>
+        </div>
+
+        <!-- Links -->
+        <div class="footer-menu">
+            <a href="{% url 'index' %}">Inicio</a>
+            <a href="{% url 'Catalogo' %}">Catálogo</a>
+            <a href="{% url 'SobreNosotros' %}">Sobre Nosotros</a>
+            <a href="{% url 'Contactenos' %}">Contactanos</a>
+            <a href="#">Políticas</a>
+        </div>
+
+        <!-- Redes Sociales -->
+        <div class="footer-social">
+            <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.pinterest.com/" target="_blank"><i class="fab fa-pinterest-p"></i></a>
+            <a href="https://wa.me/573001112233" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+
+        <!-- Derechos -->
+        <div class="footer-bottom">
+            <p>© 2024 YSJI FASHION · Todos los derechos reservados</p>
+        </div>
+    </div>
+</footer>
+    <!-- End copyright  -->
+    <a href="#" id="back-to-top" title="Subir" style="display: none"
+      >&uarr;</a
+    >
+    <!-- ALL JS FILES -->
+    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- ALL PLUGINS -->
+    <script src="{% static 'js/jquery.superslides.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-select.js' %}"></script>
+    <script src="{% static 'js/inewsticker.js' %}"></script>
+    <script src="{% static 'js/bootsnav.js.' %}"></script>
+    <script src="{% static 'js/images-loded.min.js' %}"></script>
+    <script src="{% static 'js/isotope.min.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/baguetteBox.min.js' %}"></script>
+    <script src="{% static 'js/form-validator.min.js' %}"></script>
+    <script src="{% static 'js/contact-form-script.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

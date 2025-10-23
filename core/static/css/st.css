@@ -1,0 +1,221 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  background-color: #f4f4f4;
+}
+
+    .container {
+      max-width: 1500px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .btn-add {
+      background-color: #28a745;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-add:hover {
+      background-color: #218838;
+    }
+
+    /* ----------------- MODAL ------------------ */
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+    }
+
+.menu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  max-height: none;    /* Sin límite de altura para que no haga scroll */
+  height: auto;
+  background-color: #fff;
+  padding: 15px 20px;  /* Padding reducido */
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.25);
+  z-index: 1001;
+  display: none;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+/* Más compacto para labels e inputs */
+.form-group label {
+  margin-bottom: 4px;   /* Menos espacio */
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 6px 8px;    /* Menos alto */
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+/* Reduce espacio entre grupos */
+.split {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  flex: 1 1 100%;  /* Que cada grupo ocupe toda la fila para vertical */
+}
+
+/* Botones más compactos */
+.button-group {
+  margin-top: 15px;
+  text-align: right;
+}
+
+.button-group button {
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+
+
+
+/* Ajuste para que los labels no se superpongan */
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #222;
+}
+
+/* Ajuste para inputs y textarea para que sean visibles */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+
+    .overlay.show,
+    .menu.show {
+      display: block;
+    }
+
+    .form-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .form-group {
+      flex: 1 1 48%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      flex: 1 1 100%;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 10px;
+      border: 1px solid #000000;
+      border-radius: 6px;
+      font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .button-group {
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .button-group button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .submit-button {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .submit-button:hover {
+      background-color: #0056b3;
+    }
+
+    .cancel-button {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .cancel-button:hover {
+      background-color: #c82333;
+    }
+    button {
+  background-color: #28a745; /* verde bonito */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #218838; /* verde más oscuro al pasar mouse */
+}
+
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}

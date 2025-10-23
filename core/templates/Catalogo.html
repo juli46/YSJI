@@ -1,0 +1,711 @@
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="YSJI FASHION - Tu tienda online de moda con descuentos increíbles">
+    <meta name="keywords" content="moda, ropa, estilo, descuentos, fashion">
+    <meta name="author" content="YSJI FASHION">
+    <title>YSJI FASHION</title>
+    <link rel="shortcut icon" href="{% static 'images/icon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.jpg' %}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/catalogo.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/filtros.css' %}">
+
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+</head>
+<style>
+  .stock-info { font-size: 0.9rem; margin-top: 6px; }
+  .stock-available { color: #198754; font-weight: 600; }
+  .stock-out { color: #6c757d; font-weight: 700; }
+  .btn-disabled {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+    opacity: 0.75;
+    cursor: not-allowed !important;
+  }
+  /* Estilos para los controles del carrito (más elegantes y compactos) */
+  .cart-qty-btn {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.8rem;
+    line-height: 1;
+    border-radius: 4px;
+    min-width: 30px;
+    height: 28px;
+  }
+  .cart-qty-input {
+    width: 44px;
+    height: 28px;
+    padding: 0.15rem 0.35rem;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+  }
+  .cart-remove-btn {
+    background: transparent;
+    border: none;
+    color: #dc3545;
+    font-size: 1.05rem;
+    line-height: 1;
+    padding: 0 6px;
+    cursor: pointer;
+  }
+  .cart-remove-btn:hover { color: #a71d2a; }
+  /* Estilos para selects de variantes más agradables */
+  .variants-selects .form-select {
+    border-radius: 999px;
+    padding: 0.375rem 1.1rem 0.375rem 0.9rem;
+    background: linear-gradient(180deg, #fff, #fbfbfb);
+    border: 1px solid #e6e6e6;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.03);
+    min-width: 140px;
+    transition: all .12s ease-in-out;
+    appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  }
+  .variants-selects .form-select:focus {
+    outline: none;
+    box-shadow: 0 4px 18px rgba(99,102,241,0.12);
+    border-color: #6366f1;
+  }
+  /* Estética del pequeño chip que muestra la selección */
+  .variant-chip {
+    display: inline-block;
+    min-width: 34px;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.82rem;
+    border-radius: 999px;
+    background: #f3f4f6;
+    color: #111827;
+    border: 1px solid rgba(0,0,0,0.06);
+    text-align: center;
+  }
+  .variant-chip.size-chip { font-weight:600; }
+  .color-preview {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: transparent;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.03) inset;
+  }
+  /* responsive small screens */
+  @media (max-width: 576px) {
+    .variants-selects .form-select { min-width: 120px; font-size: 0.88rem; }
+    .variant-chip { font-size: 0.78rem; }
+  }
+</style>
+</style>
+<style>
+    
+    
+</style>
+<body>
+   <div class="main-top" style="background:#000;">
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-12 px-0">
+                <div class="d-flex align-items-center" style="height:38px; justify-content: flex-start; padding-left: 2vw;">
+                    {% if sesion_activa %}
+                        <a href="{% if usuario.rol == 'admin' %}{% url 'dashboard' %}{% else %}{% url 'cuenta' %}{% endif %}"
+                            class="d-flex align-items-center text-white text-decoration-none" style="font-weight:600; margin-right:24px;">
+                            {% if usuario.imagen_perfil %}
+                                <img src="{{ usuario.imagen_perfil.url }}" alt="Perfil" style="width:28px;height:28px;object-fit:cover;border-radius:50%;border:1.5px solid #fff;margin-right:8px;">
+                            {% else %}
+                                <img src="{% static 'images/user-default.png' %}" alt="Perfil" style="width:28px;height:28px;object-fit:cover;border-radius:50%;border:1.5px solid #fff;margin-right:8px;">
+                            {% endif %}
+                            MI CUENTA
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="d-flex align-items-center text-white text-decoration-none" style="font-weight:600; margin-right:24px;">
+                            MI CUENTA
+                        </a>
+                    {% endif %}
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                    <a href="https://www.google.com/maps/place/SENA+-+Centro+de+Tecnolog%C3%ADa+de+la+Manufactura+Avanzada/@6.302048,-75.5734267,17z/data=!4m6!3m5!1s0x8e442f25d6670d4d:0x8043999e5e767b96!8m2!3d6.302048!4d-75.5685611!16s%2Fg%2F1trqj853?entry=ttu&g_ep=EgoyMDI1MDYyMy4yIKXMDSoASAFQAw%3D%3D" class="text-white text-decoration-none" style="font-weight:500;margin-right:24px;">NUESTRA UBICACIÓN</a>
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                    <span class="text-white" style="font-weight:500;margin-right:24px;">LLÁMANOS: +57 3312281046</span>
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                    <span class="text-white" style="font-weight:500;margin-right:24px;">COP</span>
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <header class="main-header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu"
+                        aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'images/logo.jpg' %}"
+                            width="180px" wclass="logo" alt="">
+                    </a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="navbar-menu">
+                    <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
+                        <li class="nav-item active"><a class="nav-link" href="{% url 'index' %}">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'SobreNosotros' %}">Sobre nosotros</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'Catalogo' %}">Catálogo</a></li>
+                      
+                        <li class="nav-item"><a class="nav-link" href="{% url 'Contactenos'%}">Contactanos</a></li>
+                    </ul>
+                </div>
+                <!-- End Atribute Navigation -->
+
+                <div class="attr-nav">
+                    <ul>
+                       
+                        <li class="side-menu">
+                             <a href="#" data-bs-toggle="modal" data-bs-target="#cartModal">
+                                <i class="fa fa-shopping-bag"></i>
+                                <span class="badge bg-danger" id="cart-badge">0</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+               <!-- Modal del carrito -->
+                <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true"
+                    data-bs-backdrop="false">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cartModalLabel">Carrito de Compras</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Productos del carrito -->
+                                <div class="cart-products border rounded p-3 mb-4">
+                                    <p class="text-muted text-center">Tu carrito está vacío.</p>
+                                </div>
+
+                                <!-- Total y botones -->
+                                <div class="card">
+                                    <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-center">
+                                        <h5 class="mb-3 mb-md-0">Total: <span id="total" class="text-primary">$0.00</span></h5>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-lg text-white" style="background-color: #ff7760; border-color: #ff7760;" onclick="pay()">Pagar</button>                            
+                                            <button class="btn btn-danger btn-lg" onclick="clearCart()">Vaciar Carrito</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Start Top Search -->
+    <div class="top-search">
+        <div class="container">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search">
+                <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
+            </div>
+        </div>
+    </div>
+  
+    <!-- Start All Title Box -->
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Catálogo</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index'%}">Inicio</a></li>
+                        <li class="breadcrumb-item active"><a href="">Productos</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End All Title Box -->
+
+    <!-- Start Shop Page  -->
+     <div class="container">
+      <div class="filters-bar-center">
+        <div class="filters-card">
+          
+            <!-- Categorías -->
+        <div class="filtro-desplegable" id="filtro-categorias">
+            <button class="filtro-btn" type="button" onclick="toggleFiltro('categorias')" aria-expanded="false">
+            Categorías <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="filtro-body">
+                <ul class="categoria-grid">
+                <li class="todas {% if not request.GET.categoria %}selected{% endif %}" onclick="filterCategory(event, 'Todos')" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Ver todo</span>
+                    <span class="badge bg-light text-dark" style="font-size:0.95em; min-width:32px;">{{ productos|length }}</span>
+                </li>
+                {% for cat, cantidad in categorias_conteo %}
+                    <li {% if request.GET.categoria == cat %}class="selected"{% endif %}
+                        onclick="filterCategory(event, '{{ cat }}')"
+                        style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>{{ cat }}</span>
+                    <span class="badge bg-light text-dark" style="font-size:0.95em; min-width:32px;">{{ cantidad }}</span>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+          <!-- Marcas -->
+         <div class="filtro-desplegable" id="filtro-marcas">
+            <button class="filtro-btn" type="button" onclick="toggleFiltro('marcas')" aria-expanded="false">
+                Marcas <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="filtro-body">
+                <div class="marcas-btns">
+                    <button class="marca-btn {% if not request.GET.marca or request.GET.marca == 'Todas' %}selected{% endif %}" onclick="filterBrand(event, 'Todas')">Todas</button>
+                    {% for marca in marcas %}
+                        <button class="marca-btn {% if request.GET.marca|lower == marca.nombre|lower %}selected{% endif %}" onclick="filterBrand(event, '{{ marca.nombre }}')">{{ marca.nombre }}</button>
+                    {% empty %}
+                        <span class="text-muted">No hay marcas registradas</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+          <!-- Precio -->
+          <div class="filtro-desplegable" id="filtro-precio">
+            <button class="filtro-btn" type="button" onclick="toggleFiltro('precio')" aria-expanded="false">
+              Precio <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="filtro-body" style="min-width:210px;">
+              <h3 style="font-size:1.1em;font-weight:600;margin-bottom:9px;">Precio</h3>
+              <div class="filtro-precio-linea"></div>
+              <div id="slider-range"></div>
+              <div id="precio-labels">
+                <span id="precio-min-label"></span>
+                <span>-</span>
+                <span id="precio-max-label"></span>
+              </div>
+              <button class="btn" type="button" id="filter-button">Filtro</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shop-box-inner">
+      <div class="container">
+        <div class="row product-categorie-box">
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade show active" id="grid-view">
+              <div class="row" id="products-row">
+                {% for producto in productos %}
+                <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-12 product-col mb-4"
+                     data-price="{{ producto.valor_producto }}"
+                     data-brand="{{ producto.marca_producto|default:'' }}"
+                    data-category="{% if producto.categoria %}{{ producto.categoria.nombre }}{% else %}{{ producto.categoria_producto }}{% endif %}">
+                  <div class="product-card d-flex flex-column h-100 p-2 rounded shadow-sm bg-white">
+                    <!-- Carrusel de imágenes -->
+                    <div class="img-container mb-2">
+                      <div id="carousel{{ producto.id }}" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                          {% for imagen in producto.imagenes.all %}
+                          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ imagen.imagen.url }}" alt="{{ producto.nombre_producto }}">
+                          </div>
+                          {% empty %}
+                          <div class="carousel-item active">
+                            {% if producto.imagen_producto %}
+                            <img src="{{ producto.imagen_producto.url }}" alt="{{ producto.nombre_producto }}">
+                            {% else %}
+                            <div class="img-placeholder">Sin imagen</div>
+                            {% endif %}
+                          </div>
+                          {% endfor %}
+                        </div>
+                        {% if producto.imagenes.count > 1 %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="next">
+                          <span class="carousel-control-next-icon"></span>
+                        </button>
+                        {% endif %} 
+                      </div>
+                    </div>
+                    <div class="product-info text-center">
+                      <h1>{{ producto.nombre_producto }}</h1>
+                      <span class="price">${{ producto.valor_producto|intcomma }} COP</span>
+                      {% if producto.stock %}
+                        {% if producto.stock.cantidad > 0 %}
+                          <div class="stock-info">
+                            <span class="stock-available">En stock: {{ producto.stock.cantidad }}</span>
+                          </div>
+                        {% else %}
+                          <div class="stock-info">
+                            <span class="stock-out">Agotado</span>
+                          </div>
+                        {% endif %}
+                      {% else %}
+                        <!-- Si no existe registro en stock, no mostrar o asumir 0 -->
+                        <div class="stock-info">
+                          <span class="stock-out">Agotado</span>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <!-- Selects simples para talla y color -->
+                    <div class="variants-selects my-2 px-2 d-flex flex-column align-items-center">
+                      <div class="d-flex align-items-center gap-2">
+                        {% if producto.tallas_disponibles %}
+                          <select class="form-select form-select-sm select-size" id="size-select-{{ producto.id }}">
+                            <option value="">Talla</option>
+                            {% for t in producto.tallas_disponibles|split %}
+                              <option value="{{ t|trim }}">{{ t|trim }}</option>
+                            {% endfor %}
+                          </select>
+                          <div class="variant-chip size-chip" id="size-chip-{{ producto.id }}">-</div>
+                        {% endif %}
+
+                        {% if producto.colores_disponibles %}
+                          <select class="form-select form-select-sm select-color" id="color-select-{{ producto.id }}">
+                            <option value="">Color</option>
+                            {% for c in producto.colores_disponibles|split %}
+                              <option value="{{ c|trim }}">{{ c|trim }}</option>
+                            {% endfor %}
+                          </select>
+                          <div class="color-preview" id="color-preview-{{ producto.id }}" title="Sin seleccionar"></div>
+                        {% endif %}
+                      </div>
+                    </div>
+                    <div class="add-to-cart-btn d-flex justify-content-center gap-1 mt-auto" style="flex-wrap: nowrap; overflow: hidden;">
+                      <a href="{% url 'producto_detalle_publico' producto.id %}" class="btn btn-sm btn-dark" style="padding: 4px 8px; font-size: 0.75rem;">Ver</a>
+                      {% comment %} Determinar si hay stock positivo {% endcomment %}
+                      {% if producto.stock and producto.stock.cantidad > 0 %}
+                        <button class="btn btn-sm btn-dark btn-add-cart" style="padding: 4px 8px; font-size: 0.75rem;"
+                          data-product-id="{{ producto.id }}"
+                          data-nombre="{{ producto.nombre_producto|escape }}"
+                          data-precio="{{ producto.valor_producto }}"
+                          data-imagen="{% if producto.imagenes.first %}{{ producto.imagenes.first.imagen.url }}{% elif producto.imagen_producto %}{{ producto.imagen_producto.url }}{% else %}{% endif %}"
+                          data-stock="{{ producto.stock.cantidad }}">
+                          Añadir
+                        </button>
+                        <button class="btn btn-sm btn-dark btn-buy-now" style="padding: 4px 8px; font-size: 0.75rem;"
+                          data-product-id="{{ producto.id }}"
+                          data-nombre="{{ producto.nombre_producto|escape }}"
+                          data-precio="{{ producto.valor_producto }}"
+                          data-imagen="{% if producto.imagenes.first %}{{ producto.imagenes.first.imagen.url }}{% elif producto.imagen_producto %}{{ producto.imagen_producto.url }}{% else %}{% endif %}"
+                          data-stock="{{ producto.stock.cantidad }}">
+                          Comprar
+                        </button>
+                      {% else %}
+                        <button class="btn btn-sm btn-disabled" disabled style="padding: 4px 8px; font-size: 0.75rem;">Añadir</button>
+                        <button class="btn btn-sm btn-disabled" disabled style="padding: 4px 8px; font-size: 0.75rem;">Comprar</button>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+                <a href="#" id="back-to-top" title="Subir" style="display: none;">&uarr;</a>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+                <!-- End Shop Page -->
+                <!-- ALL JS FILES -->
+
+               <!-- jQuery y jQuery UI desde CDN -->
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+                <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+                <!-- Scripts  proyecto -->
+                <script src="{% static 'js/popper.min.js' %}"></script>
+                <script src="{% static 'js/bootstrap.min.js' %}"></script>
+                <script src="{% static 'js/jquery.superslides.min.js' %}"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="{% static 'js/bootstrap-select.js' %}"></script>
+                <script src="{% static 'js/inewsticker.js' %}"></script>
+                <script src="{% static 'js/images-loded.min.js' %}"></script>
+                <script src="{% static 'js/isotope.min.js' %}"></script>
+                <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+                <script src="{% static 'js/baguetteBox.min.js' %}"></script>
+                <script src="{% static 'js/jquery.nicescroll.min.js' %}"></script>
+                <script src="{% static 'js/form-validator.min.js' %}"></script>
+                <script src="{% static 'js/contact-form-script.js' %}"></script>
+                <script src="{% static 'js/custom.js' %}"></script>
+                
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+  <div id="toastAddCart" class="toast bg-success text-white border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="d-flex">
+      <div class="toast-body">
+        Producto añadido al carrito.
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+    </div>
+  </div>
+</div>
+<!-- Toast para proceso de pago -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+  <div id="toastPago" class="toast bg-success text-white border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
+    <div class="d-flex">
+      <div class="toast-body">
+        Proceso de pago iniciado...
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+    </div>
+  </div>
+</div>
+<script>
+  // Cart utilities with stock enforcement
+  function updateBadgeFromCart() {
+    try {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      let total = 0;
+      cart.forEach(i => { total += parseInt(i.cantidad || 1); });
+      const badge = document.getElementById('cart-badge');
+      if (badge) badge.textContent = total;
+    } catch (e) { console.warn('updateBadgeFromCart', e); }
+  }
+
+  // Add to cart with stock check
+  function addToCart(productId, nombre, precio, imagenUrl, stock, talla, color) {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      // buscar por productId
+      let foundIdx = -1;
+      for (let i = 0; i < cart.length; i++) {
+        if (cart[i].productId && cart[i].productId === productId) { foundIdx = i; break; }
+      }
+      if (foundIdx >= 0) {
+        const current = parseInt(cart[foundIdx].cantidad || 0) || 0;
+        if (current + 1 > stock) {
+          Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: `Solo quedan ${stock} unidades disponibles.` });
+          return;
+        }
+        cart[foundIdx].cantidad = current + 1;
+      } else {
+        if (stock <= 0) { Swal.fire({ icon: 'warning', title: 'Agotado', text: 'No hay unidades disponibles.' }); return; }
+        cart.push({ productId: productId, nombre: nombre, precio: parseFloat(precio) || 0, imagen: imagenUrl, cantidad: 1, stock: stock, talla: talla || '', color: color || '' });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      // toast
+      var toastEl = document.getElementById('toastAddCart');
+      if (toastEl) { new bootstrap.Toast(toastEl).show(); }
+      updateBadgeFromCart();
+      renderCartModal();
+    } catch (e) { console.warn('addToCart error', e); }
+  }
+
+  // Buy now with stock enforcement: store as buyNowProduct and redirect to pago
+  function buyNow(productId, nombre, precio, imagenUrl, stock) {
+    try {
+      if (stock <= 0) { Swal.fire({ icon: 'warning', title: 'Agotado', text: 'No hay unidades disponibles.' }); return; }
+      const item = { productId: productId, nombre: nombre, precio: parseFloat(precio) || 0, cantidad: 1, imagen: imagenUrl, stock: stock, talla: '', color: '' };
+      try { localStorage.setItem('buyNowProduct', JSON.stringify([item])); } catch (e) { console.warn('No se pudo guardar buyNowProduct', e); }
+      updateBadgeFromCart();
+      window.location.href = '{% url "pago" %}?buynow=1';
+    } catch (e) { console.warn('buyNow error', e); }
+  }
+
+  // Render cart modal showing qty controls and respecting per-item stock
+  function renderCartModal() {
+    try {
+      const container = document.querySelector('.cart-products');
+      if (!container) return;
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!cart || cart.length === 0) {
+        container.innerHTML = '<p class="text-muted text-center">Tu carrito está vacío.</p>';
+        const totalSpan = document.getElementById('total'); if (totalSpan) totalSpan.textContent = '$0.00';
+        return;
+      }
+      let html = '<ul class="list-group">';
+      let total = 0;
+      cart.forEach((p, idx) => {
+        const qty = parseInt(p.cantidad || 1);
+        const maxStock = parseInt(p.stock || 0);
+        const lineTotal = Number(p.precio) * qty;
+        html += `<li class="list-group-item d-flex align-items-center justify-content-between border-0" style="background:#fff;">
+                  <div class="d-flex align-items-center">
+                    ${p.imagen ? `<img src="${p.imagen}" style="width:50px;height:50px;object-fit:cover;margin-right:12px;">` : ''}
+                    <div>
+                      <div style="font-weight:600">${p.nombre}</div>
+                      <div class="text-muted small">Precio: $${Number(p.precio).toLocaleString()} COP</div>
+                      <div class="text-muted small">${maxStock > 0 ? 'Disponibles: ' + maxStock : 'Agotado'}</div>
+                    </div>
+                  </div>
+                  <div class="text-end d-flex flex-column align-items-end">
+                    <div class="fw-bold text-primary">$${lineTotal.toLocaleString()} COP</div>
+                    <div class="d-flex align-items-center mt-2">
+                      <button class="btn btn-light cart-qty-btn me-1" onclick="decrementQty(${idx})">−</button>
+                      <input type="number" min="1" value="${qty}" class="cart-qty-input me-1" onchange="setQty(${idx}, this.value)">
+                      <button class="btn btn-light cart-qty-btn me-2" onclick="incrementQty(${idx})">+</button>
+                      <button class="cart-remove-btn" title="Eliminar producto" onclick="removeItem(${idx})">&times;</button>
+                    </div>
+                  </div>
+                </li>`;
+        total += lineTotal;
+      });
+      html += `</ul>`;
+      container.innerHTML = html;
+      const totalSpan = document.getElementById('total'); if (totalSpan) totalSpan.textContent = '$' + Number(total).toLocaleString() + ' COP';
+    } catch (e) { console.warn('renderCartModal', e); }
+  }
+
+  function saveCart(cart) { try { localStorage.setItem('cart', JSON.stringify(cart)); updateBadgeFromCart(); renderCartModal(); } catch(e) { console.warn('saveCart', e); } }
+
+  // increment with stock check
+  function incrementQty(idx) {
+    try {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]'); if (!cart[idx]) return;
+      const current = parseInt(cart[idx].cantidad || 0) || 0; const stock = parseInt(cart[idx].stock || 0);
+      if (current + 1 > stock) { Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: `Solo quedan ${stock} unidades disponibles.` }); return; }
+      cart[idx].cantidad = current + 1; saveCart(cart);
+    } catch(e) { console.warn('incrementQty', e); }
+  }
+
+  function decrementQty(idx) {
+    try {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]'); if (!cart[idx]) return;
+      const current = (parseInt(cart[idx].cantidad || 1) || 1) - 1;
+      if (current <= 0) { cart.splice(idx, 1); } else { cart[idx].cantidad = current; }
+      saveCart(cart);
+    } catch(e) { console.warn('decrementQty', e); }
+  }
+
+  function setQty(idx, val) {
+    try {
+      const v = parseInt(val) || 1; const cart = JSON.parse(localStorage.getItem('cart') || '[]'); if (!cart[idx]) return;
+      const stock = parseInt(cart[idx].stock || 0);
+      if (v <= 0) { cart.splice(idx,1); }
+      else if (v > stock) { Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: `Solo quedan ${stock} unidades disponibles.` }); cart[idx].cantidad = stock; }
+      else { cart[idx].cantidad = v; }
+      saveCart(cart);
+    } catch(e) { console.warn('setQty', e); }
+  }
+
+  function removeItem(idx) { try { const cart = JSON.parse(localStorage.getItem('cart') || '[]'); if (!cart[idx]) return; cart.splice(idx, 1); saveCart(cart); } catch(e) { console.warn('removeItem', e); } }
+
+  function clearCart() { try { localStorage.removeItem('cart'); updateBadgeFromCart(); renderCartModal(); } catch (e) { console.warn('clearCart', e); } }
+
+  document.addEventListener('DOMContentLoaded', function(){ updateBadgeFromCart(); var cartModalEl = document.getElementById('cartModal'); if (cartModalEl) { cartModalEl.addEventListener('show.bs.modal', renderCartModal); } });
+</script>
+</script>
+
+<script>
+  // Listeners for buttons generated in the product cards
+  document.addEventListener('DOMContentLoaded', function(){
+    // add to cart buttons
+    document.querySelectorAll('.btn-add-cart').forEach(btn => {
+      btn.addEventListener('click', function(e){
+        const id = parseInt(this.dataset.productId);
+        const nombre = this.dataset.nombre || '';
+        const precio = this.dataset.precio || '0';
+        const imagen = this.dataset.imagen || '';
+        const stock = parseInt(this.dataset.stock || '0');
+        // leer selects de talla/color si existen
+        let talla = '';
+        let color = '';
+        const sizeEl = document.getElementById('size-select-' + id);
+        if (sizeEl) talla = sizeEl.value || '';
+        const colorEl = document.getElementById('color-select-' + id);
+        if (colorEl) color = colorEl.value || '';
+        // si hay selects y no se ha seleccionado, impedir añadir
+        const requiresSize = !!sizeEl;
+        const requiresColor = !!colorEl;
+        if ((requiresSize && !talla) || (requiresColor && !color)) {
+          Swal.fire({ icon: 'info', title: 'Selecciona variantes', text: 'Por favor selecciona talla y/o color antes de añadir al carrito.' });
+          return;
+        }
+        addToCart(id, nombre, precio, imagen, stock, talla, color);
+      });
+    });
+    // buy now buttons
+    document.querySelectorAll('.btn-buy-now').forEach(btn => {
+      btn.addEventListener('click', function(e){
+        const id = parseInt(this.dataset.productId);
+        const nombre = this.dataset.nombre || '';
+        const precio = this.dataset.precio || '0';
+        const imagen = this.dataset.imagen || '';
+        const stock = parseInt(this.dataset.stock || '0');
+        // leer selects de talla/color si existen
+        let talla = '';
+        let color = '';
+        const sizeEl = document.getElementById('size-select-' + id);
+        if (sizeEl) talla = sizeEl.value || '';
+        const colorEl = document.getElementById('color-select-' + id);
+        if (colorEl) color = colorEl.value || '';
+        // si hay tallas/colores disponibles, solicitar una selección
+        const requiresSize = !!sizeEl;
+        const requiresColor = !!colorEl;
+        if ((requiresSize && !talla) || (requiresColor && !color)) {
+          Swal.fire({ icon: 'info', title: 'Selecciona variantes', text: 'Por favor selecciona talla y/o color antes de comprar.' });
+          return;
+        }
+        // pasar talla/color a buyNow para redirigir con la selección
+        const item = { productId: id, nombre: nombre, precio: parseFloat(precio) || 0, cantidad: 1, imagen: imagen, stock: stock, talla: talla, color: color };
+        try { localStorage.setItem('buyNowProduct', JSON.stringify([item])); } catch (e) { console.warn('No se pudo guardar buyNowProduct', e); }
+        window.location.href = '{% url "pago" %}?buynow=1';
+      });
+    });
+  });
+</script>
+
+<script>
+  // Sincronizar chips/preview con selects de variantes
+  document.addEventListener('DOMContentLoaded', function(){
+    // buscar todos los selects de tallas y colores y enlazar change
+    document.querySelectorAll('select.select-size').forEach(s => {
+      const id = s.id.replace('size-select-','');
+      const chip = document.getElementById('size-chip-' + id);
+      const update = () => { if (chip) chip.textContent = s.value ? s.value : '-'; };
+      s.addEventListener('change', update);
+      update();
+    });
+    document.querySelectorAll('select.select-color').forEach(s => {
+      const id = s.id.replace('color-select-','');
+      const prev = document.getElementById('color-preview-' + id);
+      const update = () => {
+        const v = s.value || '';
+        if (!prev) return;
+        if (!v) { prev.style.background = 'transparent'; prev.title = 'Sin seleccionar'; prev.textContent = ''; }
+        else if (/^#([0-9A-F]{3}){1,2}$/i.test(v.trim())) {
+          prev.style.background = v.trim(); prev.title = v.trim(); prev.textContent = '';
+        } else {
+          // mostrar una etiqueta pequeña con texto
+          prev.style.background = '#f3f4f6'; prev.textContent = v; prev.title = v; prev.style.display = 'inline-flex'; prev.style.alignItems = 'center'; prev.style.justifyContent = 'center'; prev.style.fontSize = '0.72rem';
+        }
+      };
+      s.addEventListener('change', update);
+      update();
+    });
+  });
+</script>
+
+</body>
+</html>

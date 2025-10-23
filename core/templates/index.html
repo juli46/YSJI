@@ -1,0 +1,428 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Metadatos básicos -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Información SEO -->
+    <meta name="description" content="YSJI FASHION - Tu tienda online de moda con descuentos increíbles">
+    <meta name="keywords" content="moda, ropa, estilo, descuentos, fashion">
+    <meta name="author" content="YSJI FASHION">
+    <!-- Título -->
+    <title>YSJI FASHION</title>
+    <!-- Logos -->
+    <link rel="shortcut icon" href="{% static 'images/icon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.jpg' %}">
+    <!-- Estilos -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+</head>
+
+<body>
+ <div class="main-top" style="background:#000;">
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-12 px-0">
+                <div class="d-flex align-items-center" style="height:38px; justify-content: flex-start; padding-left: 2vw;">
+                    {% if sesion_activa %}
+                        <a href="{% if usuario.rol == 'admin' %}{% url 'dashboard' %}{% else %}{% url 'cuenta' %}{% endif %}"
+                            class="d-flex align-items-center text-white text-decoration-none" style="font-weight:600; margin-right:24px;">
+                            {% if usuario.imagen_perfil %}
+                                <img src="{{ usuario.imagen_perfil.url }}" alt="Perfil" style="width:28px;height:28px;object-fit:cover;border-radius:50%;border:1.5px solid #fff;margin-right:8px;">
+                            {% else %}
+                                <img src="{% static 'images/user-default.png' %}" alt="Perfil" style="width:28px;height:28px;object-fit:cover;border-radius:50%;border:1.5px solid #fff;margin-right:8px;">
+                            {% endif %}
+                            MI CUENTA
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="d-flex align-items-center text-white text-decoration-none" style="font-weight:600; margin-right:24px;">
+                            MI CUENTA
+                        </a>
+                    {% endif %}
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                    <a href="https://www.google.com/maps/place/SENA+-+Centro+de+Tecnolog%C3%ADa+de+la+Manufactura+Avanzada/@6.302048,-75.5734267,17z/data=!4m6!3m5!1s0x8e442f25d6670d4d:0x8043999e5e767b96!8m2!3d6.302048!4d-75.5685611!16s%2Fg%2F1trqj853?entry=ttu&g_ep=EgoyMDI1MDYyMy4yIKXMDSoASAFQAw%3D%3D" class="text-white text-decoration-none" style="font-weight:500;margin-right:24px;">NUESTRA UBICACIÓN</a>
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                    <span class="text-white" style="font-weight:500;margin-right:24px;">LLÁMANOS: +57 3312281046</span>
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                    <span class="text-white" style="font-weight:500;margin-right:24px;">COP</span>
+                    <span style="color:#fff;opacity:.55;font-size:1.3em;margin-right:24px;">|</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <header class="main-header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-default bootsnav">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu"
+                        aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'index' %}">
+                        <img src="{% static 'images/logo.jpg' %}" width="180px" alt="YSJI Fashion Logo">
+                    </a>
+                </div>
+                <!-- Menú de navegación principal -->
+                <div class="collapse navbar-collapse" id="navbar-menu">
+                    <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
+                        <li class="nav-item active"><a class="nav-link" href="{% url 'index' %}">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'SobreNosotros' %}">Sobre nosotros</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'Catalogo' %}">Catálogo</a></li>
+                       
+                        <li class="nav-item"><a class="nav-link" href="{% url 'Contactenos' %}">Contáctanos</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="side">
+                <a href="#" class="close-side"><i class="fa fa-times"></i></a>
+                <li class="cart-box">
+                    <ul class="cart-list">
+                    </ul>
+                </li>
+            </div>
+        </nav>
+    </header>
+    <div class="top-search">
+        <div class="container">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search">
+                <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
+            </div>
+        </div>
+    </div>
+    <!-- Carrusel -->
+    <div id="slides-shop" class="cover-slides">
+        <ul class="slides-container">
+            <li class="text-left">
+                <img src="{% static 'images/1.jpg' %}" alt="Modelo luciendo una prenda de YSJI FASHION">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Bienvenido a <br>YSJI FASHION</strong></h1>
+                            <p class="m-b-40"><br>Creando Tendencias, No Siguiéndolas</p>
+                            <p><a class="btn hvr-hover" href="{% url 'Catalogo' %}">Comprar</a></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="text-center">
+                <img src="{% static 'images/2.jpg' %}" alt="Diseño exclusivo en YSJI FASHION">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Bienvenido a <br>YSJI FASHION</strong></h1>
+                            <p class="m-b-40">Dónde la Moda se Convierte en Arte<br></p>
+                            <p><a class="btn hvr-hover" href="{% url 'Catalogo' %}">Comprar</a></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="text-right">
+                <img src="{% static 'images/3.jpg' %}" alt="Estilo contemporáneo en YSJI FASHION">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Bienvenido a <br>YSJI FASHION</strong></h1>
+                            <p class="m-b-40">Estilo que Trasciende el tiempo</p>
+                            <p><a class="btn hvr-hover" href="{% url 'Catalogo' %}">Comprar</a></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <!-- Fin Carrusel -->
+
+    <!-- Categorias -->
+    <section class="categories-shop">
+        <div class="container">
+            <header>
+                <h2 class="text-center">Descubre nuestras categorías más populares y encuentra tu estilo</h2>
+            </header>
+            <br>
+            <div class="row">
+                <!-- Primera columna de categorías -->
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/7a.jpg' %}"
+                            alt="Camisetas - Ropa cómoda y moderna" />
+                        <div class="overlay">
+                        <a class="btn hvr-hover" href="{% url 'Catalogo' %}?categoria=Camisetas">Camisetas</a>
+                            <p class="category-description">Encuentra camisetas con los diseños más trendy y cómodos.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/b.jpg' %}" alt="Vestidos - Elegancia y estilo" />
+                        <div class="overlay">
+                            <a class="btn hvr-hover" href="{% url 'Catalogo' %}?categoria=vestidos">Vestidos</a>
+                            <p class="category-description">Descubre una variedad de vestidos para cada ocasión.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Segunda columna de categorías -->
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/61.jpg' %}" alt="Sacos - Clásicos y modernos" />
+                        <div class="overlay">
+                            <a class="btn hvr-hover" href="{% url 'Catalogo' %}?categoria=sacos">Sacos</a>
+                            <p class="category-description">Elige entre sacos elegantes para complementar tu look.</p>
+                        </div>
+                    </div>
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/10c.jpg' %}" alt="Jeans - Comodidad diaria" />
+                        <div class="overlay">
+                            <a class="btn hvr-hover" href="{% url 'Catalogo' %}?categoria=jeans">Jeans</a>
+                            <p class="category-description">Jeans cómodos y versátiles para tu día a día.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tercera columna de categorías -->
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/9b.jpg' %}" alt="Faldas - Diversidad de estilos" />
+                        <div class="overlay">
+                            <a class="btn hvr-hover" href="{% url 'Catalogo' %}?categoria=faldas">Faldas</a>
+                            <p class="category-description">Faldas con estilos variados para cada gusto.</p>
+                        </div>
+                    </div>
+                    <div class="shop-cat-box">
+                        <img class="img-fluid" src="{% static 'images/11c.png' %}"
+                            alt="Accesorios - Completa tu outfit" />
+                        <div class="overlay">
+                            <a class="btn hvr-hover" href="{% url 'Catalogo' %}?categoria=accesorios">Accesorios</a>
+                            <p class="category-description">Agrega el toque final a tu look con nuestros accesorios.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Fin Categorias -->
+
+    <!-- Productos -->
+    <div class="products-box">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="title-all text-center">
+                    <h1>Productos Destacados</h1>
+                    <p>Conoce los productos más vendidos este 2025</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="special-menu text-center">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row special-list">
+            {% for producto in productos_destacados %}
+            {% with cat=producto.categoria %}
+            <div class="col-lg-3 col-md-6 special-grid 
+                {% if cat and cat.nombre|lower == 'accesorios' %}top-featured
+                {% elif cat and cat.nombre|lower == 'bolsos' %}best-seller
+                {% else %}otros{% endif %}">
+                
+                <div class="products-single fix">
+                    <div class="box-img-hover">
+                        <div class="type-lb">
+                            <p class="{% if forloop.counter|divisibleby:2 %}new{% else %}sale{% endif %}">
+                                {% if forloop.counter|divisibleby:2 %}Nuevo{% else %}Venta{% endif %}
+                            </p>
+                        </div>
+                        
+                    {% if producto.imagenes.first %}
+                        <img src="{{ producto.imagenes.first.imagen.url }}" alt="{{ producto.nombre_producto }}" class="img-fluid">
+                    {% elif producto.imagen_producto %}
+                        <img src="{{ producto.imagen_producto.url }}" alt="{{ producto.nombre_producto }}" class="img-fluid">
+                    {% else %}
+                        <img src="{% static 'images/no-image.png' %}" alt="Sin imagen" class="img-fluid">
+                    {% endif %}
+
+
+
+                        
+                        <div class="mask-icon" id="producto-{{ producto.id }}">
+                            <ul>
+                                <button class="like-button" onclick="toggleLike('producto-{{ producto.id }}')">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <span class="like-count">0</span> like
+                            </ul>
+                            <a class="cart" href="{% url 'Catalogo' %}{% if cat %}?categoria={{ cat.id }}{% else %}?categoria={{ producto.categoria_producto }}{% endif %}">
+                                Ver
+                            </a>
+                        </div>
+                    </div>
+                    <div class="why-text">
+                        <h4>{{ producto.nombre_producto }}</h4>
+                        <h5>${{ producto.valor_producto|floatformat:0 }}</h5>
+                    </div>
+                </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+    <!-- Fin Productos -->
+
+<div class="container my-5">
+  <div class="blog-row">
+    <div class="section-title-block">
+      <h1>Blog</h1>
+    </div>
+
+    {% for blog in blogs %}
+    <div class="blog-card-horizontal">
+      <img src="{{ blog.foto.url }}" class="blog-card-img" alt="{{ blog.titulo }}">
+      <div class="blog-card-content">
+        <h3>{{ blog.titulo }}</h3>
+        <p>{{ blog.cuerpo|linebreaks }}</p>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No hay blogs disponibles.</p>
+    {% endfor %}
+
+  </div>
+</div>
+    <!-- Carrusel Footer -->
+    <div class="instagram-box">
+        <div class="main-instagram owl-carousel owl-theme">
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/o.jpg' %}" class="slide" alt="" />
+                  
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/p.jpg' %}" class="slide" alt="" />
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/q.jpg' %}" class="slide" alt="" />
+                  
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/cc.jpg' %}" class="slide" alt="" />
+                  
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/bb.jpg' %}" class="slide" alt="" />
+                  
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/aa.jpg' %}" class="slide" alt="" />
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/zz.jpg' %}" class="slide" alt="" />
+                   
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/t.jpg' %}" class="slide" alt="" />
+                 
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/s.jpg' %}" class="slide" alt="" />
+                  
+                </div>
+            </div>
+            <div class="item">
+                <div class="ins-inner-box">
+                    <img src="{% static 'images/y.jpg' %}" class="slide" alt="" />
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fin Carrusel -->
+<footer class="footer">
+    <div class="container">
+        <!-- Logo -->
+        <div class="footer-logo">
+            <h2>YSJI FASHION</h2>
+        </div>
+
+        <!-- Links -->
+        <div class="footer-menu">
+            <a href="{% url 'index' %}">Inicio</a>
+            <a href="{% url 'Catalogo' %}">Catálogo</a>
+            <a href="{% url 'SobreNosotros' %}">Sobre Nosotros</a>
+            <a href="{% url 'Contactenos' %}">Contactanos</a>
+            <a href="#">Políticas</a>
+        </div>
+
+        <!-- Redes Sociales -->
+        <div class="footer-social">
+            <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.pinterest.com/" target="_blank"><i class="fab fa-pinterest-p"></i></a>
+            <a href="https://wa.me/573001112233" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+
+        <!-- Derechos -->
+        <div class="footer-bottom">
+            <p>© 2024 YSJI FASHION · Todos los derechos reservados</p>
+        </div>
+    </div>
+</footer>
+
+   <a href="#" id="back-to-top" title="Subir" style="display: none"
+      >&uarr;</a>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- ALL PLUGINS -->
+    <script src="{% static 'js/jquery.superslides.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-select.js' %}"></script>
+    <script src="{% static 'js/inewsticker.js' %}"></script>
+    <script src="{% static 'js/bootsnav.js.' %}"></script>
+    <script src="{% static 'js/images-loded.min.js' %}"></script>
+    <script src="{% static 'js/isotope.min.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/baguetteBox.min.js' %}"></script>
+    <script src="{% static 'js/form-validator.min.js' %}"></script>
+    <script src="{% static 'js/contact-form-script.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+{% if messages %}
+    <div id="public-messages" style="position: fixed; top: 16px; right: 16px; z-index:9999;">
+        {% for message in messages %}
+            {% if not message.tags or 'dashboard' not in message.tags %}
+                <div class="alert-message" style="background:#222;color:#fff;padding:10px 14px;border-radius:6px;margin-bottom:8px;box-shadow:0 4px 10px rgba(0,0,0,.12);">
+                    {{ message }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+</body>
+</html>

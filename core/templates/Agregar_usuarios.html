@@ -1,0 +1,365 @@
+{% extends 'dashboard_base.html' %} {% block content %}
+
+<!-- Bootstrap & Bootstrap Icons -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+  rel="stylesheet"
+/>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if messages %} {% for message in messages %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    Swal.fire({
+      icon: "{{ message.tags }}",
+      title: "{{ message.tags|title }}",
+      text: "{{ message|escapejs }}",
+      confirmButtonText: "Aceptar",
+    });
+  });
+</script>
+{% endfor %} {% endif %}
+
+<div class="container mt-5">
+  <div class="card shadow border-0">
+    <div
+      class="card-header bg-gold text-white d-flex justify-content-between align-items-center"
+    >
+      <h4 class="mb-0">{{ accion }} Usuario</h4>
+    </div>
+    <div class="card-body p-4">
+      <form method="post" id="userForm" novalidate>
+        {% csrf_token %}
+
+        <!-- Nombre -->
+        <div class="mb-4">
+          <label for="id_nombre" class="form-label fw-bold text-gold"
+            >Nombre</label
+          >
+          <input
+            type="text"
+            name="nombre"
+            class="form-control"
+            id="id_nombre"
+            required
+          />
+          <div class="error-message" id="error-nombre"></div>
+        </div>
+
+        <!-- Correo -->
+        <div class="mb-4">
+          <label for="id_correo" class="form-label fw-bold text-gold"
+            >Correo</label
+          >
+          <input
+            type="email"
+            name="correo"
+            class="form-control"
+            id="id_correo"
+            required
+          />
+          <div class="error-message" id="error-correo"></div>
+        </div>
+
+        <!-- Rol -->
+        <div class="mb-4">
+          <label
+            for="{{ form.rol.id_for_label }}"
+            class="form-label fw-bold text-gold"
+            >Rol</label
+          >
+          {{ form.rol }}
+          <div class="error-message">
+            {% for error in form.rol.errors %} {{ error }} {% endfor %}
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-4">
+          <label for="id_contraseña" class="form-label fw-bold text-gold"
+            >Contraseña</label
+          >
+          <input
+            type="password"
+            name="contraseña"
+            class="form-control"
+            id="id_contraseña"
+            required
+          />
+          <div class="error-message" id="error-contraseña"></div>
+        </div>
+
+        <!-- Confirmar contraseña -->
+        <div class="mb-4">
+          <label
+            for="id_confirmar_contraseña"
+            class="form-label fw-bold text-gold"
+            >Confirmar Contraseña</label
+          >
+          <input
+            type="password"
+            name="confirmar_contraseña"
+            class="form-control"
+            id="id_confirmar_contraseña"
+            required
+          />
+          <div class="error-message" id="error-confirmar"></div>
+        </div>
+
+        <!-- Mostrar contraseña -->
+        <div class="mb-4">
+          <input
+            type="checkbox"
+            id="mostrarContraseña"
+            class="form-check-input me-2"
+            onclick="mostrarContraseñas()"
+          />
+          <label for="mostrarContraseña" class="form-check-label"
+            >Mostrar Contraseña</label
+          >
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex mt-4 gap-3">
+          <button type="submit" class="btn btn-success fw-bold shadow-sm">
+            <i class="bi bi-pencil-square me-2"></i>{{ accion }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger fw-bold shadow-sm"
+            data-href="{% url 'dashboard_usuarios' %}"
+            onclick="window.location.href = this.dataset.href;"
+          >
+            <i class="bi bi-x-circle me-2"></i>Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- JS Validaciones -->
+<script>
+ function alerta(icon, title, text) {
+    Swal.fire({
+      icon: icon, // 'success', 'error', etc.
+      title: title,
+      html: text, // permite saltos de línea
+      showConfirmButton: true,
+      confirmButtonColor: '#000',
+      background: '#fff',
+      iconColor: icon === 'success' ? '#28a745' : '#dc3545',
+      customClass: {
+        title: 'fs-5 fw-bold',
+        popup: 'p-4 rounded-3 shadow',
+      },
+    });
+  }
+
+  function mostrarContraseñas() {
+    const tipo =
+      document.getElementById("id_contraseña").type === "password"
+        ? "text"
+        : "password";
+    document.getElementById("id_contraseña").type = tipo;
+    document.getElementById("id_confirmar_contraseña").type = tipo;
+  }
+
+  function validarNombre(nombre) {
+    const regex = /^[A-Za-zÁÉÍÓÚáéíóúñÑ]+(?: [A-Za-zÁÉÍÓÚáéíóúñÑ]+)*$/;
+    return regex.test(nombre.trim());
+  }
+
+  function validarCorreo(correo) {
+    correo = correo.toLowerCase();
+    if (!correo.includes("@"))
+      return { valido: false, mensaje: "Correo inválido, falta @" };
+
+    const [local, dominioCompleto] = correo.split("@");
+    if (!local || local.length < 6)
+      return { valido: false, mensaje: "Debe tener al menos 6 caracteres antes del @" };
+    if (!/[a-z]/.test(local))
+      return { valido: false, mensaje: "Debe contener al menos una letra antes del @" };
+    if (!/^[a-z0-9.]+$/.test(local))
+      return { valido: false, mensaje: "Solo letras minúsculas, números y puntos (.) antes del @" };
+    if (!dominioCompleto) return { valido: false, mensaje: "Dominio inválido." };
+
+    const partesDominio = dominioCompleto.split(".");
+    if (partesDominio.length < 2)
+      return { valido: false, mensaje: "Dominio debe tener una extensión válida." };
+
+    const dominio = partesDominio[0];
+    const extension = partesDominio.slice(1).join(".");
+    const dominiosValidos = ["gmail", "hotmail", "outlook", "example"];
+    const extensionesValidas = ["com", "net", "org", "edu"];
+
+    if (!dominiosValidos.includes(dominio))
+      return { valido: false, mensaje: `Dominio inválido. Solo: ${dominiosValidos.join(", ")}` };
+    if (!extensionesValidas.includes(extension))
+      return { valido: false, mensaje: `Extensión inválida. Solo: ${extensionesValidas.join(", ")}` };
+
+    return { valido: true, mensaje: "" };
+  }
+
+  function validarContraseña(pass) {
+    return (
+      /[A-Z]/.test(pass) &&
+      /[a-z]/.test(pass) &&
+      /[0-9]/.test(pass) &&
+      /[\W_]/.test(pass) &&
+      pass.length >= 8
+    );
+  }
+
+  async function correoExiste(correo) {
+    const response = await fetch(`/verificar-correo/?correo=${encodeURIComponent(correo)}`);
+    const data = await response.json();
+    return data.existe;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("userForm");
+    const nombre = document.getElementById("id_nombre");
+    const correo = document.getElementById("id_correo");
+    const pass = document.getElementById("id_contraseña");
+    const confirm = document.getElementById("id_confirmar_contraseña");
+    const rolSelect = form.querySelector("select[name='rol']"); // select de rol
+
+    // Validaciones en tiempo real
+    nombre.addEventListener("input", () => {
+      const valido = validarNombre(nombre.value);
+      nombre.classList.toggle("is-invalid", !valido);
+      document.getElementById("error-nombre").innerText = valido ? "" : "Solo letras y espacios intermedios.";
+    });
+
+    correo.addEventListener("input", async () => {
+      correo.value = correo.value.toLowerCase();
+      const { valido, mensaje } = validarCorreo(correo.value);
+      if (!valido) {
+        correo.classList.add("is-invalid");
+        document.getElementById("error-correo").innerText = mensaje;
+        return;
+      }
+      if (await correoExiste(correo.value)) {
+        correo.classList.add("is-invalid");
+        document.getElementById("error-correo").innerText = "El correo ya está registrado.";
+      } else {
+        correo.classList.remove("is-invalid");
+        document.getElementById("error-correo").innerText = "";
+      }
+    });
+
+    pass.addEventListener("input", () => {
+      const valido = validarContraseña(pass.value);
+      pass.classList.toggle("is-invalid", !valido);
+      document.getElementById("error-contraseña").innerText = valido
+        ? ""
+        : "Debe tener 8 caracteres, mayúscula, minúscula, número y símbolo.";
+    });
+
+    confirm.addEventListener("input", () => {
+      const valido = pass.value === confirm.value;
+      confirm.classList.toggle("is-invalid", !valido);
+      document.getElementById("error-confirmar").innerText = valido ? "" : "Las contraseñas no coinciden.";
+    });
+
+    // Validación al enviar
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const errores = [];
+
+      if (!validarNombre(nombre.value)) {
+        errores.push("Nombre inválido.");
+        nombre.classList.add("is-invalid");
+      }
+
+      const correoValidado = validarCorreo(correo.value);
+      if (!correoValidado.valido) {
+        errores.push(correoValidado.mensaje);
+        correo.classList.add("is-invalid");
+      } else if (await correoExiste(correo.value)) {
+        errores.push("El correo ya está registrado.");
+        correo.classList.add("is-invalid");
+      }
+
+      if (!validarContraseña(pass.value)) {
+        errores.push("Contraseña inválida.");
+        pass.classList.add("is-invalid");
+      }
+
+      if (pass.value !== confirm.value) {
+        errores.push("Las contraseñas no coinciden.");
+        confirm.classList.add("is-invalid");
+      }
+
+      if (errores.length > 0) {
+        alerta("error", "Errores en el formulario", errores.join("<br>"));
+      } else {
+        // Determinar mensaje según el rol
+        const rol = rolSelect.value.toLowerCase();
+        const mensajeExito =
+          rol === "administrador" ? "Administrador creado correctamente" : "Usuario creado correctamente";
+
+        alerta("success", "¡Éxito!", mensajeExito);
+        form.submit();
+      }
+    });
+  });
+</script>
+{% if messages %}
+      {% for message in messages %}
+        alerta("{{ message.tags }}", "{{ message.tags|title }}", "{{ message|escapejs }}");
+      {% endfor %}
+    {% endif %}
+
+<!-- Estilos -->
+<style>
+  .bg-gold {
+    background-color: #000 !important;
+    color: white !important;
+  }
+
+  .text-gold {
+    color: #000 !important;
+  }
+
+  .form-control:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25);
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+
+  .mb-4 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    min-height: 1.25em;
+  }
+
+  .is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  }
+</style>
+
+{% endblock %}
