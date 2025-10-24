@@ -190,6 +190,11 @@
                 <li>No hay productos en este pedido.</li>
                 {% endfor %}
               </ul>
+               <div class="mt-3">
+                <a href="{% url 'factura_pedido' pedido.id %}" target="_blank" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-file-earmark-pdf"></i> Descargar factura PDF
+                </a>
+              </div>
               {% if pedido.estado == "Pendiente" %}
               {% endif %}
             </div>

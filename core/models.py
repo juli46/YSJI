@@ -190,5 +190,17 @@ def decrease_stock_on_order(sender, instance, created, **kwargs):
             pass
 
 
+from django.db import models
+
+class Factura(models.Model):
+    invoice_id = models.CharField(max_length=100, unique=True)
+    email_cliente = models.EmailField()
+    producto = models.CharField(max_length=200)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    estado = models.CharField(max_length=50)
+    creada_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.producto} - {self.estado}"
 
          

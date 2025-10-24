@@ -86,7 +86,9 @@ urlpatterns = [
     path('contactos/eliminar/<int:mensaje_id>/', views.eliminar_mensaje, name='eliminar_mensaje'),
     path('contactos/eliminar-todos/', views.eliminar_todos_mensajes, name='eliminar_todos_mensajes'),
 
+    #--PayPal--
     path('paypal/confirm/', views.paypal_confirm, name='paypal_confirm'),
+    path('pedido/<int:pedido_id>/factura/', views.generar_factura_pedido, name='factura_pedido'),
 
 ]
 

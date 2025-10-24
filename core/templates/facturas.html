@@ -1,0 +1,26 @@
+<!-- templates/facturas.html -->
+<h1>Facturas Generadas</h1>
+<table border="1">
+    <tr>
+        <th>ID Factura</th>
+        <th>Cliente</th>
+        <th>Producto</th>
+        <th>Precio</th>
+        <th>Estado</th>
+        <th>Ver en PayPal</th>
+    </tr>
+    {% for f in facturas %}
+    <tr>
+        <td>{{ f.invoice_id }}</td>
+        <td>{{ f.email_cliente }}</td>
+        <td>{{ f.producto }}</td>
+        <td>{{ f.precio }}</td>
+        <td>{{ f.estado }}</td>
+        <td>
+            <a href="https://www.sandbox.paypal.com/invoice/payerView/details/{{ f.invoice_id }}" target="_blank">
+                Ver PDF
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

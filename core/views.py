@@ -3,6 +3,8 @@
 import json
 # Para crear decoradores
 from functools import wraps
+# Decorador CSRF exempt
+from django.views.decorators.csrf import csrf_exempt
 # Renderizado de vistas, redirección y obtención segura de objetos
 from django.shortcuts import render, redirect, get_object_or_404
 # Mensajes temporales al usuario
@@ -1616,3 +1618,182 @@ def eliminar_mensaje(request, mensaje_id):
 def eliminar_todos_mensajes(request):
     Mensaje.objects.all().delete()
     return redirect('dashboard_contacto')  
+
+
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.lib.utils import ImageReader
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import Paragraph, Table, TableStyle
+from reportlab.lib.utils import ImageReader
+from reportlab.lib.units import inch, cm
+
+def generar_factura_pedido(request, pedido_id):
+    """Genera una factura elegante en PDF."""
+    try:
+        # Importar componentes adicionales de ReportLab
+      
+
+        # Obtener pedido y verificar permisos
+        pedido = get_object_or_404(Pedido, id=pedido_id)
+        
+        if not request.session.get('usuario_id') or (
+            pedido.usuario_id != request.session['usuario_id'] and 
+            request.session.get('usuario_rol') != 'admin'
+        ):
+            return HttpResponse("No autorizado", status=403)
+
+        # Crear PDF
+        filename = f"factura_pedido_{pedido.id}.pdf"
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        # Iniciar documento
+        p = canvas.Canvas(response, pagesize=letter)
+        width, height = letter
+
+        # Colores corporativos
+        COLOR_PRINCIPAL = colors.HexColor('#2C3E50')
+        COLOR_SECUNDARIO = colors.HexColor('#95A5A6')
+        COLOR_ACENTO = colors.HexColor('#3498DB')
+
+        # Logo (si existe en static)
+        try:
+            from django.contrib.staticfiles import finders
+            logo_path = finders.find('images/logo.jpg')
+            if logo_path:
+                p.drawImage(ImageReader(logo_path), 40, height - 120, width=180, height=80)
+        except Exception:
+            pass
+
+        # Información de la empresa (header derecho)
+        p.setFont("Helvetica-Bold", 10)
+        p.setFillColor(COLOR_PRINCIPAL)
+        info_empresa = [
+            "YSJI FASHION",
+            "NIT: 900.434.453-3",
+            "Tel: +57 331 228 1046",
+            "Email: Yjsifashion@gmail.com",
+            "Medellin, Colombia"
+        ]
+        y = height - 80
+        for linea in info_empresa:
+            p.drawRightString(width - 40, y, linea)
+            y -= 15
+
+        # Título Factura
+        p.setFont("Helvetica-Bold", 24)
+        p.drawString(40, height - 160, f"FACTURA #{pedido.id}")
+        
+        # Línea divisoria
+        p.setStrokeColor(COLOR_SECUNDARIO)
+        p.line(40, height - 180, width - 40, height - 180)
+
+        # Información del cliente y factura
+        p.setFont("Helvetica-Bold", 11)
+        p.setFillColor(COLOR_PRINCIPAL)
+        y = height - 220
+        
+        # Columna izquierda
+        p.drawString(40, y, "FACTURADO A:")
+        p.setFont("Helvetica", 10)
+        y -= 20
+        cliente_info = [
+            pedido.usuario.nombre if pedido.usuario else "Cliente General",
+            f"Email: {pedido.usuario.correo if pedido.usuario else 'N/A'}",
+        ]
+        for linea in cliente_info:
+            p.drawString(40, y, linea)
+            y -= 15
+
+        # Columna derecha
+        y = height - 220
+        p.setFont("Helvetica-Bold", 11)
+        p.drawString(350, y, "DETALLES DE FACTURA:")
+        p.setFont("Helvetica", 10)
+        y -= 20
+        
+        from datetime import datetime
+        detalles_factura = [
+            f"Fecha: {pedido.fecha.strftime('%d/%m/%Y')}",
+            f"Método de pago: PayPal",
+        ]
+        for linea in detalles_factura:
+            p.drawString(350, y, linea)
+            y -= 15
+
+        # Tabla de productos
+        y -= 30
+        headers = ['Producto', 'Cant.', 'Precio Unit.', 'Total']
+        data = [headers]
+        
+        total = 0
+        for item in pedido.productos:
+            precio = float(item.get('precio', 0))
+            cantidad = int(item.get('cantidad', 1))
+            subtotal = precio * cantidad
+            total += subtotal
+            
+            data.append([
+                item.get('nombre', 'Producto'),
+                str(cantidad),
+                f"${precio:,.2f}",
+                f"${subtotal:,.2f}"
+            ])
+
+        # Agregar totales
+        data.append(['', '', 'Subtotal:', f"${total:,.2f}"])
+        iva = total * 0.19
+        data.append(['', '', 'IVA (19%):', f"${iva:,.2f}"])
+        data.append(['', '', 'Total:', f"${(total + iva):,.2f}"])
+
+        # Estilos de la tabla
+        table = Table(data, colWidths=[280, 60, 100, 100])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), COLOR_PRINCIPAL),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -4), colors.white),
+            ('BACKGROUND', (0, -3), (-1, -1), colors.whitesmoke),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('FONTNAME', (0, -3), (-1, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('ALIGN', (-2, -3), (-1, -1), 'RIGHT'),
+            ('GRID', (0, 0), (-1, -1), 1, COLOR_SECUNDARIO)
+        ]))
+        
+        table.wrapOn(p, width, height)
+        table.drawOn(p, 40, y - 200)
+
+        # Pie de página
+        p.setFont("Helvetica", 9)
+        p.setFillColor(COLOR_SECUNDARIO)
+        footer_text = [
+            "Gracias por su compra",
+            "Para cualquier consulta: Yjsifashion@gmail.com",
+            "www.ysjifashion.com"
+        ]
+        y = 50
+        for linea in footer_text:
+            p.drawCentredString(width/2, y, linea)
+            y -= 15
+
+        # Finalizar PDF
+        p.showPage()
+        p.save()
+        return response
+
+    except Exception as e:
+        print(f"Error generando PDF: {str(e)}")
+        return HttpResponse(
+            f"Error generando el PDF: {str(e)}",
+            content_type='text/plain',
+            status=500
+        )

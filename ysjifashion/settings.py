@@ -29,7 +29,7 @@ DEBUG = True
 # settings.py
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'juvenilely-uncandid-loura.ngrok-free.dev',]
 
 
 # Application definition
@@ -145,6 +145,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# PayPal Sandbox
+PAYPAL_CLIENT_ID = "AfFmoNGhHVg4hXOHy6wtl10KQZNu9qmKPy5oNMw3EFtvJfQtvb_JdyZyv2W2fB30HMqDv1qym_FBIZ6v"
+PAYPAL_CLIENT_SECRET = "EDIzN1By-VddpXTSsQw7yIWLYQd9mKYOL2ZWYXBomFlXnblS29eQW4AYnLlBPP9fB6kEdkeU0x0rCoQU"
+PAYPAL_MERCHANT_EMAIL = "sb-bczpb47129738@personal.example.com"
 
 
 
