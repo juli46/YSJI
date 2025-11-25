@@ -503,7 +503,14 @@ def index_view(request):
     usuario = get_object_or_404(Usuario, id=request.session['usuario_id']) if 'usuario_id' in request.session else None
     
     blogs = Blog.objects.all().order_by('-id')[:3]
-    productos_destacados = Producto.objects.all()[:4]
+    # Mostrar únicamente productos ligados a un descuento activo dentro del rango de fechas
+    ahora = timezone.now()
+    productos_destacados = Producto.objects.filter(
+        descuento__isnull=False,
+        descuento__activo=True,
+        descuento__fecha_inicio__lte=ahora,
+        descuento__fecha_fin__gte=ahora
+    ).distinct()[:4]
 
     descuentos = Descuento.objects.filter(
         activo=True
