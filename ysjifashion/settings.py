@@ -109,14 +109,21 @@ WSGI_APPLICATION = 'ysjifashion.wsgi.application'
 #         }
 #     }
 # }
+
 import os
 
-if os.getenv("RENDER"):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.dummy",  # No usa base de datos
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
+}
+
+
 
 
 # Password validation
