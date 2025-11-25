@@ -30,12 +30,12 @@ DEBUG = True
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    ".onrender.com",
-    "ysji-fashion.onrender.com"
-]
+# Hosts permitidos
+ALLOWED_HOSTS = ['ysji.onrender.com', 'localhost', '127.0.0.1']
+
+# Dominios confiables para CSRF (POST, login, etc.)
+CSRF_TRUSTED_ORIGINS = ['https://ysji.onrender.com']
+
 
 
 # Application definition
