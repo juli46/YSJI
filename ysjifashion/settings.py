@@ -96,19 +96,19 @@ WSGI_APPLICATION = 'ysjifashion.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ysji_crud',           # el nombre de tu base de datos
-        'USER': 'root',           # tu usuario de MySQL
-        'PASSWORD': '',           # tu contraseña (vacía si no tienes)
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-        }
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ysji_crud',           # el nombre de tu base de datos
+#         'USER': 'root',           # tu usuario de MySQL
+#         'PASSWORD': '',           # tu contraseña (vacía si no tienes)
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+#         }
+#     }
+# }
 import os
 
 if os.getenv("RENDER"):
