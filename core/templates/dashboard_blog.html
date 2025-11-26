@@ -58,6 +58,93 @@
   </tbody>
 </table>
 <style>
+  /* --- RESPONSIVE GENERAL PARA EL BLOG --- */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .blog-form-container {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .card-header {
+    font-size: 1.1rem;
+    padding: 10px 16px;
+  }
+
+  .blog-form input,
+  .blog-form textarea,
+  .blog-form select {
+    font-size: 0.95rem;
+  }
+
+  .btn-success {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Celulares grandes */
+@media (max-width: 768px) {
+  .blog-form-container {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .card {
+    box-shadow: none;
+  }
+
+  .blog-form p {
+    font-size: 0.95rem;
+  }
+
+  .btn-sm,
+  .btn-danger,
+  .btn-primary {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+  
+  /* TABLA SCROLLABLE para no romper el diseño */
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* Celulares pequeños */
+@media (max-width: 480px) {
+  .card-header {
+    font-size: 1rem;
+    padding: 8px 12px;
+  }
+
+  .blog-form input,
+  .blog-form textarea,
+  .blog-form select {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .btn-success {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+
+  .table th,
+  .table td {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+}
+
   .btn-sm {
   padding: 6px 12px;
   font-size: 0.875rem;

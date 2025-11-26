@@ -189,199 +189,189 @@
      font-size: 30px;
 }
 /*------------------------------------------------------------------ HEADER -------------------------------------------------------------------*/ 
-.main-top{
-     background: #010101;
-     padding: 10px 0px;
+/* ============================================
+   ESTILOS GENERALES
+============================================ */
+.main-top {
+    background: #010101;
+    padding: 6px 10px !important;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
- .custom-select-box{
-     float: right;
-     width: 95px;
-     margin-left: 20px;
-}
- .custom-select-box .form-control{
-     background: none;
-     border: none;
-}
- .custom-select-box .bootstrap-select .btn-light{
-     padding: 4px;
-     font-size: 14px;
-     background: #000000;
-     color: #fff;
-     border: none;
-     border-radius: 0px;
-}
- .custom-select-box .bootstrap-select .btn-light span{
-     padding: 2px;
-     line-height: 15px;
-}
- .dropdown-toggle::after{
-     margin-left: -24px;
-}
- .custom-select-box .dropdown-toggle::after {
-     display: inline-block;
-     width: 0;
-     height: 0;
-     margin-left: .255em;
-     vertical-align: .255em;
-     content: "";
-     border-top: .3em solid;
-     border-right: .3em solid transparent;
-     border-bottom: 0;
-     border-left: .3em solid transparent;
-     position: absolute;
-     top: 13px;
-     right: 10px;
-}
- .bootstrap-select.btn-group .dropdown-toggle .filter-option{
-     overflow: inherit;
-}
- .bootstrap-select.btn-group .dropdown-menu{
-     border: none;
-     padding: 0px;
-     border-radius: 0px;
-}
- .right-phone-box{
-     float: right;
-     margin-left: 10px;
-}
- .right-phone-box p{
-     margin: 0px;
-     color: #ffffff;
-     font-size: 14px;
-     line-height: 30px;
-}
- .right-phone-box p a{
-     color: #ffffff;
-}
- .right-phone-box p a:hover{
-     color: #000000};
 
- .offer-box,.slide {
-     color: #FFFFFF;
-     font-size: 13px;
-     padding: 2px 15px;
-     font-family: 'Montserrat', sans-serif;
+/* ============================================
+   SELECT PERSONALIZADO
+============================================ */
+.custom-select-box {
+    width: 120px;
 }
- .offer-box li {
-     font-weight: 600;
+
+.custom-select-box .form-control {
+    background: none;
+    border: none;
 }
- .offer-box li i{
-     margin-right: 15px;
-     color: #000000;
-     font-size: 20px;
+
+.custom-select-box .bootstrap-select .btn-light {
+    padding: 4px;
+    font-size: 14px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 0;
 }
- .our-link{
-     float: right;
+
+.custom-select-box .bootstrap-select .btn-light span {
+    padding: 2px;
+    line-height: 15px;
 }
- .our-link ul li{
-     display: inline-block;
-     border-right: 1px solid #ffffff;
-     padding: 0px 10px;
-     line-height: 14px;
+
+.custom-select-box .dropdown-toggle::after {
+    position: absolute;
+    top: 13px;
+    right: 10px;
+    border-top: .3em solid;
+    border-right: .3em solid transparent;
+    border-left: .3em solid transparent;
 }
- .our-link ul{
-     line-height: 30px;
-}
-.our-link ul li {
-    color: #ffffff;
-    font-weight: 700;
-    text-transform: uppercase;
+
+/* ============================================
+   TELÉFONO / CONTACTO
+============================================ */
+.right-phone-box {
+    color: white;
     font-size: 14px;
 }
- .our-link ul li a{
-     color: #ffffff;
-     font-weight: 700;
-     text-transform: uppercase;
-     font-size: 14px;
+
+.right-phone-box p {
+    margin: 0;
+    color: white;
+    font-size: 14px;
+    line-height: 30px;
 }
- .our-link ul li a:hover{
-     color: #000000;
+
+.right-phone-box a {
+    color: white;
 }
- .our-link ul li:last-child{
-     border: none;
+
+.right-phone-box a:hover {
+    color: #000;
 }
- .main-header{
+
+/* ============================================
+   LINKS SUPERIORES
+============================================ */
+.our-link ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
- .search a{
-     color: #000000;
+
+.our-link ul li {
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding-right: 10px;
+    border-right: 1px solid #fff;
 }
- .attr-nav > ul > li > a:hover{
-     color: #000000;
+
+.our-link ul li:last-child {
+    border-right: none;
 }
- nav.navbar.bootsnav ul.nav > li > a{
-     margin: 0px;
+
+.our-link ul li a:hover {
+    color: #000;
 }
-/* Navbar Adjusment =========================== */
-/* Navbar Atribute ------*/
- .attr-nav > ul > li > a{
-     padding: 28px 15px;
+
+/* ============================================
+   OFERTA / SLIDE
+============================================ */
+.offer-box, .slide {
+    color: #fff;
+    font-size: 13px;
+    padding: 2px 15px;
+    font-family: 'Montserrat', sans-serif;
 }
- ul.cart-list > li.total > .btn{
-     border-bottom: solid 1px #cfcfcf !important;
-     color: #010101 ;
-     padding: 10px 15px;
-     border: none;
-     font-weight: 700;
-     color: #ffffff;
-}
- @media (min-width: 1024px) {
-    /* Navbar General ------*/
-     nav.navbar ul.nav > li > a{
-         padding: 30px 15px;
-         font-weight: 600;
+
+/* ============================================
+   MEDIA QUERIES RESPONSIVE
+============================================ */
+
+/* ---------- Tablets (≤1024px) ---------- */
+@media (max-width: 1024px) {
+    .main-top {
+        justify-content: space-between;
+        padding: 10px;
     }
-     nav.navbar .navbar-brand{
-         margin-top: 0;
+
+    .custom-select-box {
+        width: 110px;
     }
-     nav.navbar .navbar-brand{
-         margin-top: 0;
-    }
-     nav.navbar li.dropdown ul.dropdown-menu{
-         border-top: solid 5px;
-    }
-    /* Navbar Center ------*/
-     nav.navbar-center .navbar-brand{
-         margin: 0 !important;
-    }
-    /* Navbar Brand Top ------*/
-     nav.navbar-brand-top .navbar-brand{
-         margin: 10px !important;
-    }
-    /* Navbar Full ------*/
-     nav.navbar-full .navbar-brand{
-         position: relative;
-         top: -15px;
-    }
-    /* Navbar Sidebar ------*/
-     nav.navbar-sidebar ul.nav, nav.navbar-sidebar .navbar-brand{
-         margin-bottom: 50px;
-    }
-     nav.navbar-sidebar ul.nav > li > a{
-         padding: 10px 15px;
-         font-weight: bold;
-    }
-    /* Navbar Transparent & Fixed ------*/
-     nav.navbar.bootsnav.navbar-transparent.white{
-         background-color: rgba(255,255,255,0.3);
-         border-bottom: solid 1px #bbb;
-    }
-     nav.navbar.navbar-inverse.bootsnav.navbar-transparent.dark, nav.navbar.bootsnav.navbar-transparent.dark{
-         background-color: rgba(0,0,0,0.3);
-         border-bottom: solid 1px #555;
-    }
-     nav.navbar.bootsnav.navbar-transparent.white .attr-nav{
-         border-left: solid 1px #bbb;
-    }
-     nav.navbar.navbar-inverse.bootsnav.navbar-transparent.dark .attr-nav, nav.navbar.bootsnav.navbar-transparent.dark .attr-nav{
-         border-left: solid 1px #555;
-    }
-     nav.navbar.bootsnav.no-background.white .attr-nav > ul > li > a, nav.navbar.bootsnav.navbar-transparent.white .attr-nav > ul > li > a, nav.navbar.bootsnav.navbar-transparent.white ul.nav > li > a, nav.navbar.bootsnav.no-background.white ul.nav > li > a{
-         color: #fff;
-    }
-     nav.navbar.bootsnav.navbar-transparent.dark .attr-nav > ul > li > a, nav.navbar.bootsnav.navbar-transparent.dark ul.nav > li > a{
-         color: #eee;
+
+    .our-link ul li {
+        font-size: 13px;
+        padding: 0 8px;
     }
 }
+
+/* ---------- Celulares grandes (≤768px) ---------- */
+@media (max-width: 768px) {
+    .main-top {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .custom-select-box {
+        width: 140px;
+    }
+
+    .right-phone-box {
+        margin: 5px 0;
+    }
+
+    .our-link ul {
+        justify-content: center;
+    }
+
+    .our-link ul li {
+        border: none;
+        padding: 5px 0;
+    }
+}
+
+/* ---------- Celulares pequeños (≤480px) ---------- */
+@media (max-width: 480px) {
+    .main-top {
+        padding: 10px 5px !important;
+    }
+
+    .custom-select-box {
+        width: 100%;
+        text-align: center;
+    }
+
+    .offer-box,
+    .slide {
+        font-size: 12px;
+        padding: 2px 10px;
+    }
+
+    .our-link ul li {
+        font-size: 12px;
+    }
+
+    .right-phone-box p {
+        font-size: 12px;
+        line-height: 20px;
+    }
+}
+
  
 /* Navbar Inverse =================================*/
  nav.navbar.navbar-inverse{
