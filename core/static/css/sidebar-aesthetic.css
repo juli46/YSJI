@@ -1,0 +1,356 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+/* ================================================= */
+/* 🎨 PALETA DE COLORES (AESTHETIC) */
+/* ================================================= */
+
+:root {
+    /* Modo Claro */
+    --color-fondo-principal: rgb(245, 247, 250);
+    --color-barra-lateral: rgb(255, 255, 255); /* Blanco limpio */
+    
+    --color-acento-primario: rgb(54, 112, 235); /* Azul/Violeta para botones activos */
+    --color-acento-secundario: rgb(34, 47, 62); /* Título, texto principal */
+
+    --color-texto: var(--color-acento-secundario); 
+    --color-texto-menu: rgb(110, 120, 140); /* Gris suave */
+
+    --color-menu-hover: rgba(54, 112, 235, 0.1); /* Hover azul claro */
+    --color-menu-hover-texto: var(--color-acento-primario); 
+
+    --color-linea: rgb(230, 230, 230); 
+    --color-sombra: rgba(0, 0, 0, 0.05);
+
+    --color-switch-base: rgb(151, 144, 144);
+    --color-switch-circulo: rgb(255, 255, 255);
+}
+
+.dark-mode {
+    /* Modo Oscuro - Gris oscuro elegante */
+    --color-fondo-principal: rgb(18, 24, 33);
+    --color-barra-lateral: rgb(27, 36, 48);
+    
+    --color-acento-primario: rgb(90, 150, 255); /* Azul más brillante en Dark Mode */
+    --color-acento-secundario: rgb(235, 240, 245);
+
+    --color-texto: var(--color-acento-secundario);
+    --color-texto-menu: rgb(150, 160, 175); 
+
+    --color-menu-hover: rgba(90, 150, 255, 0.1);
+    --color-menu-hover-texto: var(--color-acento-secundario); 
+
+    --color-linea: rgb(50, 60, 75);
+    --color-sombra: rgba(0, 0, 0, 0.3);
+
+    --color-switch-base: rgb(90, 150, 255);
+    --color-switch-circulo: rgb(255, 255, 255);
+}
+
+
+/* ================================================= */
+/* ⚙️ ESTILOS BASE Y BARRA LATERAL */
+/* ================================================= */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Outfit", sans-serif;
+}
+
+body {
+    height: 100vh;
+    width: 100%;
+    background-color: var(--color-fondo-principal);
+    transition: background-color 0.3s ease;
+}
+
+.barra-lateral {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 260px; 
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px 15px;
+    background-color: var(--color-barra-lateral);
+    box-shadow: 2px 0 15px var(--color-sombra); /* Sombra elegante */
+    transition: width 0.5s cubic-bezier(0.8, 0, 0.2, 1), background-color 0.3s ease, left 0.5s ease;
+    z-index: 50;
+}
+.mini-barra-lateral {
+    width: 80px;
+}
+
+/* --- LOGO Y NUBE --- */
+.barra-lateral .nombre-pagina{
+    width: 100%;
+    height: 50px;
+    color: var(--color-texto);
+    margin-bottom: 30px; 
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+.barra-lateral .nombre-pagina ion-icon{
+    min-width: 50px;
+    font-size: 32px;
+    cursor: pointer;
+    color: var(--color-acento-primario);
+    transition: all 0.3s ease;
+}
+.barra-lateral .nombre-pagina span{
+    margin-left: 10px;
+    font-size: 1.4em;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.5s ease, width 0.5s ease;
+}
+
+/* --- NAVEGACIÓN --- */
+.barra-lateral .navegacion ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.barra-lateral .navegacion li {
+    margin-bottom: 6px; 
+    border-radius: 12px;
+}
+.barra-lateral .navegacion a{
+    width: 100%;
+    height: 50px;
+    display:flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 0 10px;
+    border-radius: 10px;
+    color: var(--color-texto-menu);
+    transition: all 0.3s ease;
+}
+.barra-lateral .navegacion a:hover{
+    background-color: var(--color-menu-hover);
+    color: var(--color-menu-hover-texto);
+}
+.barra-lateral .navegacion ion-icon{
+    min-width: 45px;
+    font-size: 22px;
+    text-align: center;
+}
+.barra-lateral .navegacion span{
+    margin-left: 5px;
+    white-space: nowrap;
+}
+
+/* Estilo para el ítem activo (más destacado) */
+.navegacion ul li.active {
+    background-color: var(--color-acento-primario);
+    box-shadow: 0 4px 10px rgba(54, 112, 235, 0.4); 
+}
+.navegacion ul li.active a {
+    color: var(--color-menu-hover-texto); /* Color del texto del item activo */
+    font-weight: 600;
+}
+.navegacion ul li.active a:hover {
+    background-color: var(--color-acento-primario); /* Mantiene el color al hacer hover */
+    color: white;
+}
+.dark-mode .navegacion ul li.active {
+    box-shadow: 0 4px 10px rgba(90, 150, 255, 0.4); 
+}
+
+/* --- LINEA Y MODO OSCURO --- */
+.barra-lateral .linea{
+    width: 100%;
+    height: 1px;
+    margin: 20px 0;
+    background-color: var(--color-linea);
+}
+
+.barra-lateral .modo-oscuro{
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    padding: 0 5px; 
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--color-linea);
+    transition: background-color 0.3s ease;
+}
+.dark-mode .barra-lateral .modo-oscuro {
+    background-color: rgba(255, 255, 255, 0.05); /* Fondo sutil en dark mode */
+}
+.barra-lateral .modo-oscuro .info{
+    height: 45px;
+    display: flex;
+    align-items: center;
+    color: var(--color-texto-menu);
+}
+.barra-lateral .modo-oscuro .info ion-icon{
+    min-width: 45px;
+    font-size: 20px;
+}
+
+/* Switch */
+.barra-lateral .modo-oscuro .base{
+    background-color: var(--color-switch-base);
+    transition: background-color 0.3s;
+}
+.barra-lateral .modo-oscuro .circulo.prendido{
+    left: 17px; /* Ajuste para el switch en dark mode */
+}
+
+
+/* --- PERFIL DE ADMINISTRADOR (MEJORADO) --- */
+
+.admin-profile-sidebar {
+    background: var(--color-barra-lateral); /* Usar el fondo de la barra */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--color-sombra); /* Sombra más fuerte */
+    margin-top: 10px; 
+    padding: 10px 8px;
+    border: 1px solid var(--color-linea); /* Borde suave para definir */
+    transition: all 0.3s ease;
+}
+
+.dark-mode .admin-profile-sidebar {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--color-linea);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.admin-profile-sidebar img {
+    border: 2px solid var(--color-acento-primario) !important; /* Borde de acento */
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    transition: border 0.3s ease;
+}
+
+.perfil-admin-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+}
+.perfil-admin-flex .ms-2 {
+    margin-left: 12px;
+    line-height: 1.2;
+}
+.perfil-admin-flex .fw-bold {
+    font-size: 1.05em;
+    font-weight: 600;
+    color: var(--color-texto);
+}
+.perfil-admin-flex .text-muted {
+    font-size: 0.85em;
+    color: var(--color-texto-menu) !important; 
+}
+
+/* Menú de 3 puntos (Usando el caracter 8942) */
+.menu-tres-puntos .puntos {
+    font-size: 1.8em;
+    color: var(--color-texto-menu);
+    transition: color 0.3s ease;
+}
+.menu-tres-puntos:hover .puntos {
+    color: var(--color-acento-primario);
+}
+.menu-tres-puntos .menu-opciones {
+    background: var(--color-barra-lateral); 
+    border: 1px solid var(--color-linea);
+    box-shadow: 0 4px 12px var(--color-sombra);
+    right: -10px; /* Desplazado ligeramente */
+}
+.menu-tres-puntos .menu-opciones a:hover {
+    background: var(--color-menu-hover);
+    color: var(--color-acento-primario);
+}
+
+/* --- MODO MINI (OCULTAR) --- */
+.mini-barra-lateral .barra-lateral span:not(.usuario span):not(.admin-profile-sidebar span) {
+    opacity: 0;
+    width: 0;
+    transition: opacity 0.5s ease, width 0.5s ease;
+}
+.mini-barra-lateral .nombre-pagina span {
+    display: none; 
+}
+.mini-barra-lateral .nombre-pagina ion-icon,
+.mini-barra-lateral .navegacion ion-icon {
+    min-width: 80px; 
+    margin: 0;
+}
+.mini-barra-lateral .navegacion a {
+    justify-content: center;
+    padding: 0;
+}
+.mini-barra-lateral .modo-oscuro {
+    justify-content: center;
+    background: transparent;
+}
+.mini-barra-lateral .modo-oscuro .info {
+    display: none;
+}
+.mini-barra-lateral .admin-profile-sidebar {
+    padding: 10px 0; 
+    box-shadow: none;
+    border: none;
+    background: transparent !important;
+}
+.mini-barra-lateral .perfil-admin-flex {
+    flex-direction: column;
+    justify-content: center;
+}
+.mini-barra-lateral .perfil-admin-flex > div:first-child {
+    flex-direction: column;
+}
+.mini-barra-lateral .admin-profile-sidebar img {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+}
+.mini-barra-lateral .ms-2 {
+    display: none !important; /* Oculta nombre y email */
+}
+.mini-barra-lateral .menu-tres-puntos {
+    display: none; 
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+main{
+    margin-left: 260px;
+    padding: 25px;
+    transition: margin-left 0.5s cubic-bezier(0.8, 0, 0.2, 1);
+}
+main.min-main{
+    margin-left: 80px;
+}
+
+/* --- Responsive (Móvil) --- */
+@media (max-width: 768px) {
+    .barra-lateral {
+        width: 280px;
+        left: -300px;
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+    }
+    .max-barra-lateral { 
+        left: 0;
+    }
+    main {
+        margin-left: 0;
+        padding: 20px;
+    }
+    main.min-main {
+        margin-left: 0;
+    }
+    /* Muestra la X al abrir el menú en móvil */
+    .max-barra-lateral + main .menu ion-icon:nth-child(1) { 
+        display: none; 
+    }
+    .max-barra-lateral + main .menu ion-icon:nth-child(2) { 
+        display: block; 
+    }
+}

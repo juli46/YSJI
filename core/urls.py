@@ -49,6 +49,7 @@ urlpatterns = [
     path('productos/buscar/', buscar_view, name='buscar_productos'),
     path('validar-codigo/', views.validar_codigo_unico, name='validar_codigo'),
     
+    
     #--Pedidos---
     path('pedidos/', views.pedidos_dashboard_view, name='dashboard_pedidos'),
     path('pedidos/cambiar_estado/<int:pedido_id>/', views.cambiar_estado_pedido_view, name='cambiar_estado_pedido'),

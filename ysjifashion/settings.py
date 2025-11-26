@@ -96,32 +96,30 @@ WSGI_APPLICATION = 'ysjifashion.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ysji_crud',           # el nombre de tu base de datos
-#         'USER': 'root',           # tu usuario de MySQL
-#         'PASSWORD': '',           # tu contraseña (vacía si no tienes)
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
-#         'OPTIONS': {
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-#         }
-#     }
-# }
-
 import os
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT'),
+if os.environ.get('RENDER'):  # Estamos en Render    
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
+            'PORT': os.environ.get('DB_PORT'),
+        }
     }
-}
+else:  # Local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'ysji_crud',
+            'USER': 'root',
+            'PASSWORD': '',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+        }
+    }
 
 
 
@@ -225,12 +223,6 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASS')  # App Password de Gmail (NO tu co
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-
-
-
-
-
-
 # PayPal Sandbox
 PAYPAL_CLIENT_ID = "AfFmoNGhHVg4hXOHy6wtl10KQZNu9qmKPy5oNMw3EFtvJfQtvb_JdyZyv2W2fB30HMqDv1qym_FBIZ6v"
 PAYPAL_CLIENT_SECRET = "EDIzN1By-VddpXTSsQw7yIWLYQd9mKYOL2ZWYXBomFlXnblS29eQW4AYnLlBPP9fB6kEdkeU0x0rCoQU"
@@ -238,7 +230,16 @@ PAYPAL_MERCHANT_EMAIL = "sb-bczpb47129738@personal.example.com"
 
 
 
+import os
+
+IS_RENDER = os.environ.get('RENDER') == 'true'
 
 
+DEBUG = True if IS_RENDER else True  
 
-
+# Forzar HTTPS SOLO cuando Render esté usando reverse proxy
+if IS_RENDER:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+else:
+    SECURE_SSL_REDIRECT = False

@@ -254,18 +254,17 @@ function showAllProducts() {
 	const brandRadios = document.querySelectorAll('input[name="brand"]');
 	brandRadios.forEach(radio => radio.checked = false);
 }
-function filterCategory(event, category) {
+window.filterCategory = function(event, categoria) {
 	event.preventDefault();
-	const products = document.querySelectorAll('.product-col');
-	if (category === 'Todos') {
-		products.forEach(product => product.style.display = '');
+	const url = new URL(window.location);
+	if (categoria === 'Todos') {
+		url.searchParams.delete('categoria');
 	} else {
-		products.forEach(product => {
-			const productCategory = product.getAttribute('data-category');
-			product.style.display = (productCategory === category) ? '' : 'none';
-		});
+		url.searchParams.set('categoria', categoria);
 	}
-}
+	url.searchParams.delete('page');
+	window.location = url.toString();
+};
 
 window.filterBrand = function(event, marca) {
     event.preventDefault();
@@ -279,12 +278,51 @@ window.filterBrand = function(event, marca) {
     window.location = url.toString();
 };
 
+window.filterDiscount = function(event, valor) {
+    event.preventDefault();
+
+    const url = new URL(window.location);
+
+    if (valor === 'Todas') {
+        url.searchParams.delete('descuento');
+    } else {
+        url.searchParams.set('descuento', valor);
+    }
+
+    url.searchParams.delete('page');
+    window.location.href = url.toString();
+};
+
+
 // Inicialización del modal del carrito al cargar la página
 document.addEventListener('DOMContentLoaded', updateCartModal);
 
+// Attach click handlers to descuento list items to avoid relying on inline elements only
+document.addEventListener('DOMContentLoaded', function(){
+	try {
+		const listItems = document.querySelectorAll('#filtro-descuentos .categoria-grid li');
+		listItems.forEach(li => {
+			li.addEventListener('click', function(e){
+				const id = li.dataset.descuentoId || 'Todas';
+				filterDiscount(e, id);
+			});
+		});
+	} catch(e) { console.warn('No se encontraron items de descuento para enlazar event handlers', e); }
+});
+// Make the anchor act as fallback and also close the dropdown when clicked
+document.addEventListener('click', function(e){
+	if (!e.target) return;
+	const a = e.target.closest && e.target.closest('#filtro-descuentos .categoria-grid a');
+	if (a) {
+		// let normal navigation happen, but close the dropdown for UX
+		document.getElementById('filtro-descuentos')?.classList.remove('show');
+		try { document.querySelector('#filtro-descuentos .filtro-btn').setAttribute('aria-expanded','false'); } catch{};
+	}
+});
+
 function toggleFiltro(nombre) {
     // Cierra los otros
-    ['categorias', 'marcas', 'precio'].forEach(id => {
+	['categorias', 'marcas', 'precio', 'descuentos'].forEach(id => {
         if (id !== nombre) {
             document.getElementById('filtro-' + id).classList.remove('show');
             document.querySelector('#filtro-' + id + ' .filtro-btn').setAttribute('aria-expanded','false');
@@ -298,13 +336,13 @@ function toggleFiltro(nombre) {
 }
 // Cerrar desplegables al hacer click fuera
 document.addEventListener('click', function(e){
-    ['categorias', 'marcas', 'precio'].forEach(id => {
-        var el = document.getElementById('filtro-' + id);
-        if (el && !el.contains(e.target)) {
-            el.classList.remove('show');
-            el.querySelector('.filtro-btn').setAttribute('aria-expanded','false');
-        }
-    });
+	['categorias', 'marcas', 'precio', 'descuentos'].forEach(id => {
+		var el = document.getElementById('filtro-' + id);
+		if (el && !el.contains(e.target)) {
+			el.classList.remove('show');
+			el.querySelector('.filtro-btn').setAttribute('aria-expanded','false');
+		}
+	});
 });
 
 $(function() {

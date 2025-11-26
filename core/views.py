@@ -18,7 +18,7 @@ from django.http import JsonResponse
 # Generar URLs por nombre
 from django.urls import reverse
 # Consultas complejas
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.exceptions import FieldError
 # Manejo de fechas y horas con zona horaria
 from django.utils import timezone
@@ -541,47 +541,84 @@ def Contactenos_view(request):
 # --------- CATÁLOGO Y DETALLE DE PRODUCTO ---------
 
 def Catalogo_view(request):
-    """Vista del catálogo de productos con filtros por categoría y marca."""
     usuario = get_object_or_404(Usuario, id=request.session['usuario_id']) if 'usuario_id' in request.session else None
+
     categoria_filtro = request.GET.get('categoria')
     marca_filtro = request.GET.get('marca')
+    descuento_filtro = request.GET.get('descuento')
+
+    producto_id = request.GET.get('producto')
+
     productos = Producto.objects.all()
+    ahora = timezone.now()
+
+    # -------------------- FILTRAR UN PRODUCTO ESPECÍFICO --------------------
+    if producto_id:
+        productos = productos.filter(id=producto_id)
+
+    # -------------------- FILTRO DE CATEGORÍA --------------------
     if categoria_filtro and categoria_filtro != 'Todas':
-        # Si el parámetro es numérico, lo tratamos como id de la categoría (FK).
-        # Si no, lo tratamos como nombre y filtramos por nombre de categoría (FK).
-        # Intentamos mantener compatibilidad con el campo legado 'categoria_producto' si existe;
-        # si no existe, capturamos FieldError y filtramos solo por la FK.
         if categoria_filtro.isdigit():
             productos = productos.filter(categoria__id=int(categoria_filtro))
         else:
             try:
                 productos = productos.filter(
-                    Q(categoria__nombre__iexact=categoria_filtro) | Q(categoria_producto__iexact=categoria_filtro)
+                    Q(categoria__nombre__iexact=categoria_filtro) |
+                    Q(categoria_producto__iexact=categoria_filtro)
                 )
             except FieldError:
                 productos = productos.filter(categoria__nombre__iexact=categoria_filtro)
+
+    # -------------------- FILTRO DE MARCA --------------------
     if marca_filtro and marca_filtro != 'Todas':
         productos = productos.filter(marca__nombre__iexact=marca_filtro)
-    
-    categorias_menu = ['Camisetas', 'Abrigos', 'Sacos', 'Chaquetas', 'Pantalones', 'Jeans', 'Faldas', 'Vestidos', 'Accesorios', 'Bolsos']
+
+    # -------------------- FILTRO DE DESCUENTO --------------------
+    if descuento_filtro == "con_descuento":
+        productos = productos.filter(
+            descuento__isnull=False,
+            descuento__activo=True,
+            descuento__fecha_inicio__lte=ahora,
+            descuento__fecha_fin__gte=ahora
+        )
+
+    # -------------------- CATEGORÍAS --------------------
+    categorias_menu = [
+        'Camisetas', 'Abrigos', 'Sacos', 'Chaquetas', 'Pantalones',
+        'Jeans', 'Faldas', 'Vestidos', 'Accesorios', 'Bolsos'
+    ]
     conteos = {cat: 0 for cat in categorias_menu}
+
     for producto in Producto.objects.all():
-        # Preferir la FK 'categoria' si existe, sino usar el campo legado
-        if getattr(producto, 'categoria', None):
-            cat_display = producto.categoria.nombre
-        else:
-            cat_display = getattr(producto, 'categoria_producto', '') or ''
+        cat_display = (
+            producto.categoria.nombre 
+            if getattr(producto, 'categoria', None)
+            else getattr(producto, 'categoria_producto', '')
+        )
         if cat_display in conteos:
             conteos[cat_display] += 1
+
     categorias_conteo = [(cat, conteos[cat]) for cat in categorias_menu]
+
     marcas = Marca.objects.all().order_by('nombre')
+
+    productos_con_descuento = Producto.objects.filter(
+        descuento__isnull=False,
+        descuento__activo=True,
+        descuento__fecha_inicio__lte=ahora,
+        descuento__fecha_fin__gte=ahora
+    ).count()
+
     return render(request, 'Catalogo.html', {
         'productos': productos,
         'categorias_conteo': categorias_conteo,
         'marcas': marcas,
+        'productos_con_descuento': productos_con_descuento,
         'usuario': usuario,
         'sesion_activa': usuario is not None,
     })
+
+
 
 def producto_detalle_dashboard(request, pk):
     """Detalle de producto para el dashboard admin."""
@@ -1325,38 +1362,59 @@ def pago_view(request):
 # --------- BUSCADOR GENERAL ---------
 
 def buscar_view(request):
-    """Buscar productos por ID, código o nombre."""
     id_busqueda = request.GET.get('id_busqueda', '').strip()
     codigo_busqueda = request.GET.get('codigo_busqueda', '').strip()
     nombre_busqueda = request.GET.get('nombre_busqueda', '').strip()
+    descuento = request.GET.get('descuento', '').strip()
 
     productos = Producto.objects.all()
     filtros = Q()
 
+    # FILTROS NORMALES
     if id_busqueda.isdigit():
         filtros &= Q(id=int(id_busqueda))
+
     if codigo_busqueda:
         filtros &= Q(codigo_producto__icontains=codigo_busqueda)
+
     if nombre_busqueda:
         filtros &= Q(nombre_producto__icontains=nombre_busqueda)
 
     if filtros:
         productos = productos.filter(filtros)
 
-    # Asegurar que siempre se pase un formulario al template para que los campos
-    # como nombre/código se rendericen correctamente incluso al usar la búsqueda.
+    # FILTRO DE DESCUENTOS ACTIVOS
+    if descuento == "1":
+        ahora = timezone.now()
+        productos = productos.filter(
+            descuento__isnull=False,
+            descuento__activo=True,
+            descuento__fecha_inicio__lte=ahora,
+            descuento__fecha_fin__gte=ahora
+        )
+
+    # --- LO DEMÁS QUEDA IGUAL ---
     from .forms import ProductoForm
     form = ProductoForm()
+
     productos_qs = productos
     out_of_stock_list = []
+
     for p in productos_qs:
         try:
             qty = p.stock.cantidad
         except Exception:
             qty = None
+
         if qty is None or qty <= 0:
-            out_of_stock_list.append({'id': p.id, 'nombre': p.nombre_producto or '', 'codigo': p.codigo_producto or ''})
+            out_of_stock_list.append({
+                'id': p.id,
+                'nombre': p.nombre_producto or '',
+                'codigo': p.codigo_producto or ''
+            })
+
     out_of_stock_json = json.dumps(out_of_stock_list, ensure_ascii=False)
+
     return render(request, 'AgregarProducto.html', {
         'form': form,
         'productos': productos,
@@ -1364,8 +1422,10 @@ def buscar_view(request):
         'id_busqueda': id_busqueda,
         'codigo_busqueda': codigo_busqueda,
         'nombre_busqueda': nombre_busqueda,
+        'descuento': descuento,   # <-- IMPORTANTE
         'out_of_stock_json': out_of_stock_json,
     })
+
 
 
 

@@ -181,33 +181,50 @@
     </form>
   </div>
 
-  <form
-    method="GET"
-    action="{% url 'buscar_productos' %}"
-    class="form-busqueda-horizontal"
-  >
+  <form method="GET"
+      action="{% url 'buscar_productos' %}"
+      class="form-busqueda-horizontal">
+
     <input
       type="text"
       name="id_busqueda"
       value="{{ id_busqueda }}"
       placeholder="ID"
       pattern="\d*"
-      title="Solo números"
-    />
+      title="Solo números" />
+
     <input
       type="text"
       name="codigo_busqueda"
       value="{{ codigo_busqueda }}"
-      placeholder="Código"
-    />
+      placeholder="Código" />
+
     <input
       type="text"
       name="nombre_busqueda"
       value="{{ nombre_busqueda }}"
-      placeholder="Nombre"
-    />
+      placeholder="Nombre" />
+
+    <!-- Botón buscar normal -->
     <button type="submit">Buscar</button>
-  </form>
+
+    <!-- BOTÓN PRODUCTOS CON DESCUENTO -->
+    <button type="submit" name="descuento" value="1">
+      Productos con descuento
+    </button>
+
+    <!-- BOTÓN VER TODOS (se muestra solo si descuento está activo) -->
+    {% if descuento == "1" %}
+    <button type="button"
+        data-url="{% url 'buscar_productos' %}"
+        onclick="window.location.href=this.dataset.url">
+    Ver todos
+</button>
+    {% endif %}
+
+</form>
+
+
 
   <div class="tarjetas-productos">
     {% for producto in productos %}

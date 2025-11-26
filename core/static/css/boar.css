@@ -32,7 +32,7 @@
     --color-switch-base: rgb(39, 196, 0);
     --color-switch-circulo: rgb(255, 255, 255);
     
-   
+    
 }
 
 
@@ -55,7 +55,7 @@ body {
     position: fixed;
     width: 50px;
     height: 50px;
-    font-size: 15px;
+    font-size: 30px;
     display: none;
     justify-content: center;
     align-items: center;
@@ -70,45 +70,46 @@ body {
 
 
 /*--------------barra lateral-------------------*/
-
+/* 💡 AJUSTE: Ancho de 250px a 200px */
 .barra-lateral {
     position: fixed;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 250px;
+    width: 200px; 
     height: 100%;
     overflow: hidden;
-    padding: 20px 15px;
+    padding: 20px 10px; /* 💡 AJUSTE: Reducido el padding horizontal */
     background-color: var(--color-barra-lateral);
     transition: width 0.5s ease, background-color 0.3s ease,left 0.5s ease;
     z-index: 50;
 }
+/* 💡 AJUSTE: Ancho de 80px a 60px */
 .mini-barra-lateral {
-    width: 80px;
+    width: 60px;
 }
 .barra-lateral .nombre-pagina{
     width: 100%;
     height: 45px;
     color: var(--color-texto);
-    margin-bottom: 40px;
+    margin-bottom: 30px; /* 💡 AJUSTE: Reducido el margen inferior */
     display: flex;
     align-items: center;
 }
 .barra-lateral .nombre-pagina ion-icon{
-    min-width:50px;
-    font-size: 40px;
+    min-width: 40px; /* 💡 AJUSTE: De 50px a 40px */
+    font-size: 30px; /* 💡 AJUSTE: Reducido el tamaño del icono */
     cursor: pointer;
 }
 .barra-lateral .nombre-pagina span{
     margin-left: 5px;
-    font-size: 25px;
+    font-size: 20px; /* 💡 AJUSTE: De 25px a 20px */
 }
 
 .barra-lateral  span{
-    width: 100px;
-    font-size: 18px;
-   text-align: left;
+    width: 140px; /* 💡 AJUSTE: Adaptado al nuevo ancho */
+    font-size: 16px; /* 💡 AJUSTE: De 18px a 16px */
+    text-align: left;
     opacity: 1;
     transition: opacity 0.5s ease,width 0.5s  ease;
 }
@@ -123,24 +124,25 @@ body {
 .barra-lateral .navegacion li {
     list-style: none;
     display: flex;
-    margin-bottom: 5px;
+    margin-bottom: 3px; /* 💡 AJUSTE: Reducido el margen */
 }
 .barra-lateral .navegacion a{
     width: 100%;
-    height: 45px;
+    height: 40px; /* 💡 AJUSTE: De 45px a 40px */
     display:flex;
     align-items: center;
     text-decoration: none;
-    border-radius: 10px;
+    border-radius: 8px; /* 💡 AJUSTE: De 10px a 8px */
     color: var(--color-texto-menu);
+    font-size: 14px; /* 💡 AJUSTE: Texto más pequeño */
 }
 .barra-lateral .navegacion a:hover{
     background-color: var(--color-menu-hover);
     color: var(--color-menu-hover-texto);
 }
 .barra-lateral .navegacion ion-icon{
-    min-width: 50px;
-    font-size: 20px;
+    min-width: 40px; /* 💡 AJUSTE: De 50px a 40px */
+    font-size: 18px; /* 💡 AJUSTE: De 20px a 18px */
 }
 
 /*----------linea----*/
@@ -215,8 +217,8 @@ body {
     margin-top: auto;
 }
 .barra-lateral .usuario img{
-width: 50px;
-min-width: 50px;
+    width: 40px; /* 💡 AJUSTE: De 50px a 40px */
+    min-width: 40px;
 }
 .barra-lateral .usuario .info-usuario{
     width: 100%;
@@ -233,11 +235,11 @@ min-width: 50px;
     margin-left: 5px;
 }
 .barra-lateral .usuario .nombre{
-    font-size: 15px;
+    font-size: 13px; /* 💡 AJUSTE: De 15px a 13px */
     font-weight: 600;
 }
 .barra-lateral .usuario .email{
-    font-size: 13px;
+    font-size: 11px; /* 💡 AJUSTE: De 13px a 11px */
 }
 .barra-lateral .usuario ion-icon{
     font-size: 20px;
@@ -262,21 +264,21 @@ min-width: 50px;
     
 }
 
-
+/* 💡 AJUSTE: margin-left de 250px a 200px */
 main{
-    margin-left: 250px;
+    margin-left: 200px; 
     padding: 20px;
     transition: margin-left 0.5s ease;
 }
 
+/* 💡 AJUSTE: margin-left de 80px a 60px */
 main.min-main{
-    margin-left: 80px;
+    margin-left: 60px;
 }
 
 
 .box-info {
     position: relative;
-    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Responsivo */
     grid-gap: 24px;
     margin-top: 36px;
@@ -359,11 +361,11 @@ main.min-main{
     display: none;
 }
 
-/* Ajustar tamaño de imagen en modo mini (opcional) */
+/* 💡 AJUSTE: Ajustar tamaño de imagen en modo mini */
 .mini-barra-lateral .usuario img,
 .mini-barra-lateral .perfil-admin-flex img {
-    width: 45px;
-    height: 45px;
+    width: 35px; 
+    height: 35px;
     margin: 0;
 }
 
@@ -383,7 +385,7 @@ main.min-main{
     .barra-lateral {
         position: fixed;
         left: -300px;
-        width: 250px;
+        width: 200px; /* 💡 AJUSTE: Mantenemos el ancho para móvil */
         overflow-y: auto;
     }
     .max-barra-lateral{
@@ -441,6 +443,10 @@ main.min-main{
     .box-info li .text h3 {
         font-size: 18px;
     }
+    
+    .box-info li .text p {
+        color: #666;
+    }
 }
 
 @media (max-width: 480px) {
@@ -473,7 +479,7 @@ main.min-main{
     }
     
     .barra-lateral .nombre-pagina ion-icon {
-        min-width: 40px;
+        min-width: 35px; /* 💡 AJUSTE: de 40px a 35px */
         font-size: 30px;
     }
     
@@ -496,8 +502,8 @@ main.min-main{
     }
     
     .barra-lateral .navegacion ion-icon {
-        min-width: 40px;
-        font-size: 18px;
+        min-width: 35px; /* 💡 AJUSTE: de 40px a 35px */
+        font-size: 16px; /* 💡 AJUSTE: de 18px a 16px */
     }
     
     .barra-lateral .modo-oscuro {

@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="{% static 'css/filtros.css' %}">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -84,7 +86,7 @@
   .variants-selects .form-select:focus {
     outline: none;
     box-shadow: 0 4px 18px rgba(99,102,241,0.12);
-    border-color: #6366f1;
+    border-color: #404140;
   }
   /* Contenedor de la imagen debe permitir overlay (ribbon) */
   .img-container { position: relative; overflow: hidden; }
@@ -313,7 +315,37 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>
+            </div>
+          <!-- Descuentos -->
+          <div class="filtro-desplegable" id="filtro-descuentos">
+              <button class="filtro-btn" type="button" onclick="toggleFiltro('descuentos')" aria-expanded="false">
+                  Descuentos <i class="bi bi-chevron-down"></i>
+              </button>
+
+              <div class="filtro-body">
+                  <ul class="categoria-grid">
+
+                      <!-- Mostrar todos los productos con descuento -->
+                      <li class="{% if request.GET.descuento == 'con_descuento' %}selected{% endif %}" 
+                          data-descuento-id="con_descuento"
+                          onclick="filterDiscount(event, 'con_descuento')"
+                          style="display:flex; justify-content:space-between; align-items:center;">
+
+                          <a class="desc-link" 
+                            href="{% url 'Catalogo' %}?{% if request.GET.marca %}marca={{ request.GET.marca }}&{% endif %}
+                            {% if request.GET.categoria %}categoria={{ request.GET.categoria }}&{% endif %}
+                            descuento=con_descuento">
+                            Ofertas
+                          </a>
+
+                          <!-- Cantidad de productos con descuento -->
+                          <span class="badge bg-light text-dark" style="font-size:0.95em; min-width:32px;">
+                              {{ productos_con_descuento }}
+                          </span>
+                      </li>                    
+                  </ul>
+              </div>
+          </div>
           <!-- Precio -->
           <div class="filtro-desplegable" id="filtro-precio">
             <button class="filtro-btn" type="button" onclick="toggleFiltro('precio')" aria-expanded="false">
@@ -343,6 +375,8 @@
               <div class="row" id="products-row">
                 {% for producto in productos %}
                  <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-12 product-col mb-4"
+                   data-descuento="{% if producto.tiene_descuento %}true{% else %}false{% endif %}"
+                   data-descuento-id="{% if producto.descuento %}{{ producto.descuento.id }}{% else %}{% endif %}"
                    data-price="{{ producto.valor_producto }}"
                    data-price-final="{% if producto.tiene_descuento %}{{ producto.precio_final }}{% else %}{{ producto.valor_producto }}{% endif %}"
                      data-brand="{{ producto.marca_producto|default:'' }}"

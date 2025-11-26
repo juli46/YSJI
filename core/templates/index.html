@@ -286,63 +286,62 @@
                 </div>
             </div>
 
+            {% load humanize %}
+
             <div class="row special-list">
                 {% for producto in productos_destacados %}
                 {% with cat=producto.categoria %}
+
                 <div class="col-lg-3 col-md-6 special-grid 
-                {% if cat and cat.nombre|lower == 'accesorios' %}top-featured
-                {% elif cat and cat.nombre|lower == 'bolsos' %}best-seller
-                {% else %}otros{% endif %}">
+                    {% if cat and cat.nombre|lower == 'accesorios' %}top-featured
+                    {% elif cat and cat.nombre|lower == 'bolsos' %}best-seller
+                    {% else %}otros{% endif %}">
 
-                    <div class="products-single fix">
+                    <!-- TARJETA -->
+                    <div class="products-single fix d-flex flex-column h-100">
+
                         <div class="box-img-hover">
-                            <div class="type-lb">
-                                <!--<p class="{% if forloop.counter|divisibleby:2 %}new{% else %}sale{% endif %}">
-                                    {% if forloop.counter|divisibleby:2 %}Nuevo{% else %}Venta{% endif %}
-                                </p> -->
-                            </div>
-
+                            
                             {% if producto.imagenes.first %}
-                            <img src="{{ producto.imagenes.first.imagen.url }}" alt="{{ producto.nombre_producto }}"
-                                class="img-fluid">
+                                <img src="{{ producto.imagenes.first.imagen.url }}" class="img-fluid">
                             {% elif producto.imagen_producto %}
-                            <img src="{{ producto.imagen_producto.url }}" alt="{{ producto.nombre_producto }}"
-                                class="img-fluid">
+                                <img src="{{ producto.imagen_producto.url }}" class="img-fluid">
                             {% else %}
-                            <img src="{% static 'images/no-image.png' %}" alt="Sin imagen" class="img-fluid">
+                                <img src="{% static 'images/no-image.png' %}" class="img-fluid">
                             {% endif %}
 
                             {% if producto.tiene_descuento %}
-                            <!-- Ribbon para producto con descuento -->
                             <div class="ribbon-discount">{{ producto.texto_ribbon }}</div>
                             {% endif %}
 
-
-
-
-                            <div class="mask-icon" id="producto-{{ producto.id }}">
+                            <div class="mask-icon mt-auto" id="producto-{{ producto.id }}">
                                 <ul>
                                     <button class="like-button" onclick="toggleLike('producto-{{ producto.id }}')">
                                         <i class="far fa-heart"></i>
                                     </button>
                                     <span class="like-count">0</span> like
                                 </ul>
-                                <a class="cart"
-                                    href="{% url 'Catalogo' %}{% if cat %}?categoria={{ cat.id }}{% else %}?categoria={{ producto.categoria_producto }}{% endif %}">
+                                <a class="cart" href="{% url 'Catalogo' %}?producto={{ producto.id }}">
                                     Ver
-                                </a>
+                                </a>                          
                             </div>
                         </div>
-                        <div class="why-text">
+                        <!-- TEXTO -->
+                        <div class="why-text mt-auto">
                             <h4>{{ producto.nombre_producto }}</h4>
+
                             {% if producto.tiene_descuento %}
                                 <h5>
-                                    <span class="price-original">${{ producto.valor_producto|floatformat:0 }}</span>
-                                    <span class="price-discounted">${{ producto.precio_final|floatformat:0 }}</span>
+                                    <span class="price-original text-muted text-decoration-line-through">
+                                        ${{ producto.valor_producto|intcomma }}
+                                    </span>
+                                    <span class="price-discounted fw-bold text-danger">
+                                        ${{ producto.precio_final|intcomma }}
+                                    </span>
                                     <span class="discount-badge">{{ producto.texto_ribbon }}</span>
                                 </h5>
                             {% else %}
-                                <h5>${{ producto.valor_producto|floatformat:0 }}</h5>
+                                <h5>${{ producto.valor_producto|intcomma }}</h5>
                             {% endif %}
                         </div>
                     </div>
