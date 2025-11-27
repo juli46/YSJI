@@ -32,6 +32,11 @@
 /*------------------------------------------------------------------
     SKELETON
 -------------------------------------------------------------------*/
+html, body {
+  overflow-x: hidden !important;
+}
+
+
  body {
      color: #666666;
      font-size: 15px;
@@ -192,111 +197,23 @@
 /* ============================================
    ESTILOS GENERALES
 ============================================ */
+/* ============================================
+   BARRA SUPERIOR - MAIN TOP
+============================================ */
 .main-top {
     background: #010101;
     padding: 6px 10px !important;
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    width: 100%;
 }
 
-/* ============================================
-   SELECT PERSONALIZADO
-============================================ */
-.custom-select-box {
-    width: 120px;
-}
-
-.custom-select-box .form-control {
-    background: none;
-    border: none;
-}
-
-.custom-select-box .bootstrap-select .btn-light {
-    padding: 4px;
-    font-size: 14px;
-    background: #000;
-    color: #fff;
-    border: none;
-    border-radius: 0;
-}
-
-.custom-select-box .bootstrap-select .btn-light span {
-    padding: 2px;
-    line-height: 15px;
-}
-
-.custom-select-box .dropdown-toggle::after {
-    position: absolute;
-    top: 13px;
-    right: 10px;
-    border-top: .3em solid;
-    border-right: .3em solid transparent;
-    border-left: .3em solid transparent;
-}
-
-/* ============================================
-   TELÉFONO / CONTACTO
-============================================ */
-.right-phone-box {
-    color: white;
-    font-size: 14px;
-}
-
-.right-phone-box p {
-    margin: 0;
-    color: white;
-    font-size: 14px;
-    line-height: 30px;
-}
-
-.right-phone-box a {
-    color: white;
-}
-
-.right-phone-box a:hover {
-    color: #000;
-}
-
-/* ============================================
-   LINKS SUPERIORES
-============================================ */
-.our-link ul {
+/* No toques esto, sirve para el desktop */
+.main-top .d-flex {
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
     gap: 10px;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-.our-link ul li {
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    text-transform: uppercase;
-    padding-right: 10px;
-    border-right: 1px solid #fff;
-}
-
-.our-link ul li:last-child {
-    border-right: none;
-}
-
-.our-link ul li a:hover {
-    color: #000;
-}
-
-/* ============================================
-   OFERTA / SLIDE
-============================================ */
-.offer-box, .slide {
-    color: #fff;
-    font-size: 13px;
-    padding: 2px 15px;
-    font-family: 'Montserrat', sans-serif;
 }
 
 /* ============================================
@@ -306,71 +223,60 @@
 /* ---------- Tablets (≤1024px) ---------- */
 @media (max-width: 1024px) {
     .main-top {
-        justify-content: space-between;
         padding: 10px;
-    }
-
-    .custom-select-box {
-        width: 110px;
-    }
-
-    .our-link ul li {
-        font-size: 13px;
-        padding: 0 8px;
     }
 }
 
 /* ---------- Celulares grandes (≤768px) ---------- */
 @media (max-width: 768px) {
-    .main-top {
-        flex-direction: column;
-        text-align: center;
+
+    /* Permite que todo baje de línea */
+    .main-top .d-flex {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        text-align: center !important;
+        gap: 6px !important;
+        padding-left: 0 !important;
+        height: auto !important;
     }
 
-    .custom-select-box {
-        width: 140px;
+    /* Centrar textos y evitar que se salgan */
+    .main-top a,
+    .main-top span {
+        margin-right: 0 !important;
+        font-size: 13px !important;
+        line-height: 18px;
     }
 
-    .right-phone-box {
-        margin: 5px 0;
+    /* Ajuste del icono de perfil */
+    .main-top img {
+        margin-right: 6px !important;
     }
 
-    .our-link ul {
-        justify-content: center;
-    }
-
-    .our-link ul li {
-        border: none;
-        padding: 5px 0;
+    /* Ocultar barras verticales | en móvil */
+    .main-top span[style*="opacity"] {
+        display: none !important;
     }
 }
 
 /* ---------- Celulares pequeños (≤480px) ---------- */
 @media (max-width: 480px) {
+
     .main-top {
         padding: 10px 5px !important;
     }
 
-    .custom-select-box {
-        width: 100%;
-        text-align: center;
+    .main-top a,
+    .main-top span {
+        font-size: 12px !important;
     }
 
-    .offer-box,
-    .slide {
-        font-size: 12px;
-        padding: 2px 10px;
-    }
-
-    .our-link ul li {
-        font-size: 12px;
-    }
-
-    .right-phone-box p {
-        font-size: 12px;
-        line-height: 20px;
+    .main-top img {
+        width: 24px !important;
+        height: 24px !important;
     }
 }
+
 
  
 /* Navbar Inverse =================================*/
