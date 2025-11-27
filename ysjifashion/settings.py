@@ -237,7 +237,6 @@ IS_RENDER = os.environ.get('RENDER') == 'true'
 
 DEBUG = True if IS_RENDER else True  
 
-# Forzar HTTPS SOLO cuando Render esté usando reverse proxy
 if IS_RENDER:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
