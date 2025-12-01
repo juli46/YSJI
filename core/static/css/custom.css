@@ -1,7 +1,28 @@
+
 body{
     height: 100%;
     width: 100%;
     }
+     .variants-selects {
+    display: none;
+}
+.product-card {
+    position: relative;
+}
+
+.variants-selects {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 55px; /* encima de los botones Añadir/Comprar */
+    background: white;
+    padding: 10px;
+    z-index: 20;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    border-radius: 10px;
+}
+
     .product-container {
         width: 300px;  /* Ancho fijo */
         height: auto; /* Alto fijo */

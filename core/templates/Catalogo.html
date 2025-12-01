@@ -250,30 +250,35 @@
           </div>
 
           <div class="filtro-desplegable" id="filtro-favoritos">
-              <button class="filtro-btn" type="button" onclick="toggleFiltro('favoritos')" aria-expanded="false">
-                  Favoritos <i class="bi bi-chevron-down"></i>
-              </button>
+    <button class="filtro-btn" type="button" onclick="toggleFiltro('favoritos')" aria-expanded="false">
+        Favoritos <i class="bi bi-chevron-down"></i>
+    </button>
 
-              <div class="filtro-body">
-                  <ul class="categoria-grid">
-                      <li data-favorito-id="todos"
-                          onclick="filterWishlist(event, false)"
-                          style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
-                          <a class="desc-link" href="javascript:void(0);">Todos</a>
-                      </li>
+    <div class="filtro-body">
+        <ul class="categoria-grid">
 
-                      <li data-favorito-id="wishlist"
-                          onclick="filterWishlist(event, true)"
-                          style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
-                          <a class="desc-link" href="javascript:void(0);">Favoritos</a>
-                          <span class="badge bg-light text-dark" style="font-size:0.95em; min-width:32px;" id="wishlist-count">
-                              0
-                          </span>
-                      </li>
-                  </ul>
+            <!-- Opción para ver todos -->
+            <li data-favorito-id="todos"
+                onclick="filterWishlist(event, false)"
+                style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                
+                <a class="desc-link" href="javascript:void(0);">Todos</a>
+            </li>
 
-              </div>
-          </div>
+            <!-- Opción de favoritos -->
+            <li data-favorito-id="wishlist"
+                onclick="filterWishlist(event, true)"
+                style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                
+                <a class="desc-link" href="javascript:void(0);">Favoritos</a>
+
+                <span class="badge bg-light text-dark" style="font-size:0.95em; min-width:32px;" id="wishlist-count">
+                    0
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
 
 
           <!-- Precio -->
@@ -380,7 +385,6 @@
                         </div>
                       {% endif %}
                     </div>
-                    <!-- VARIANTES: TALLAS Y COLORES -->
                     <div class="variants-selects my-2 px-2">
 
                         <!-- TALLAS -->
@@ -496,6 +500,7 @@
   </div>
 </div>
 <script>
+  
 /* ============================
    UTILIDADES DEL CARRITO
    ============================ */
@@ -661,8 +666,12 @@ function removeItem(idx) { try { const cart = JSON.parse(localStorage.getItem('c
 
 function clearCart() { try { localStorage.removeItem('cart'); updateBadgeFromCart(); renderCartModal(); } catch (e) { console.warn('clearCart', e); } }
 
+/* Inicializar badge y modal render */
 document.addEventListener('DOMContentLoaded', function(){ updateBadgeFromCart(); var cartModalEl = document.getElementById('cartModal'); if (cartModalEl) { cartModalEl.addEventListener('show.bs.modal', renderCartModal); } });
 
+/* =================================================
+   HANDLERS: selección de variantes + botones
+   ================================================= */
 
 document.addEventListener("DOMContentLoaded", function(){
 
@@ -816,6 +825,48 @@ document.addEventListener("DOMContentLoaded", function(){
 
 }); // DOMContentLoaded
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    function mostrarVariantes(boton) {
+
+        // Ocultar variantes de TODOS los productos
+        document.querySelectorAll(".variants-selects").forEach(box => {
+            box.style.display = "none";
+        });
+
+        // Buscar el product-card al que pertenece el botón
+        const productCard = boton.closest(".product-card");
+
+        if (!productCard) return;
+
+        // Buscar SOLO las variantes dentro de ese producto
+        const variantes = productCard.querySelector(".variants-selects");
+
+        if (variantes) {
+            variantes.style.display = "block";
+        }
+    }
+
+    // Click en "Añadir"
+    document.querySelectorAll(".btn-add-cart").forEach(btn => {
+        btn.addEventListener("click", function() {
+            mostrarVariantes(this);
+        });
+    });
+
+    // Click en "Comprar"
+    document.querySelectorAll(".btn-buy-now").forEach(btn => {
+        btn.addEventListener("click", function() {
+            mostrarVariantes(this);
+        });
+    });
+
+});
+</script>
+
+
 
 
 

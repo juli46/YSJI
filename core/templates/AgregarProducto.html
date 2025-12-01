@@ -72,7 +72,7 @@
   <!-- JSON seguro con productos agotados (inyectado desde la vista) -->
   <script id="outOfStockJson" type="application/json">{{ out_of_stock_json|safe }}</script>
   <div class="overlay {% if producto_editar %}show{% endif %}" id="overlay"></div>
-  <div class="menu {% if producto_editar %}show{% endif %}" id="addMenu">
+  <div class="menu-editar {% if producto_editar %}show{% endif %}" id="addMenu">
   <form id="productForm" method="POST" enctype="multipart/form-data">
       {% csrf_token %} {% if producto_editar %}
       <input
@@ -244,18 +244,16 @@
           </div>
           {% if producto.imagenes.count > 1 %}
           <!-- Flechas para navegar -->
-          <button
+         <button
             class="carousel-control-prev"
             onclick="moveSlide('{{ producto.id }}', -1)"
-          >
-            <span class="carousel-control-prev-icon"></span>
-          </button>
-          <button
+        ></button>
+
+        <button
             class="carousel-control-next"
             onclick="moveSlide('{{ producto.id }}', 1)"
-          >
-            <span class="carousel-control-next-icon"></span>
-          </button>
+        ></button>
+
           {% endif %}
         </div>
         {% elif producto.imagen_producto %}

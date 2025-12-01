@@ -2356,6 +2356,7 @@ text-align: justify;
     display: none;
     top: 90px;
     z-index: 999;
+    width: 100%;
 }
 
 .discount-track {

@@ -233,75 +233,161 @@
     <!-- End All Title Box -->
 
     <!-- Start Contact Us  -->
-    <div class="contact-box-main">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-4 col-sm-12">
-            <div class="contact-info-left">
-              <h2>Informacion De Contacto</h2>
-              <p>
-                En este apartado, te invitamos a ponerte en contacto con
-                nosotros para resolver cualquier duda, inconveniente o
-                incertidumbre que puedas tener. Estamos completamente dispuestos
-                a ofrecerte una solución rápida y eficaz, garantizando una
-                experiencia satisfactoria.
-              </p>
-              <ul>
-                <li>
-                  <p>
-                    <i class="fas fa-phone-square"></i>Celular:
-                    <a href="tel:+1-888705770">+57 987 886 134</a>
-                  </p>
-                </li>
-                <li>
-                  <p>
-                    <i class="fas fa-envelope"></i>Correo:
-                    <a href="mailto:contactinfo@gmail.com"
-                      >YSJIfashion@gmail.com</a
-                    >
-                  </p>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-8 col-sm-12 mx-auto">
-            <div class="contact-form-right">
-              <h2 class="text-center mb-4">Ponte en Contacto</h2>
+   <div class="contact-section">
+  <div class="container">
+    <div class="row g-5">
 
-              {% if enviado %}
-              <div class="alert alert-success text-center">
-                ¡Mensaje enviado correctamente!
-              </div>
-              {% endif %}
-              <form method="POST" action="{% url 'contacto' %}" novalidate>
-                {% csrf_token %}
-                <div class="mb-3">
-                  {{ form.nombre.label_tag }} {{ form.nombre }}
-                  <div class="text-danger">{{ form.nombre.errors }}</div>
-                </div>
-                <div class="mb-3">
-                  {{ form.correo.label_tag }} {{ form.correo }}
-                  <div class="text-danger">{{ form.correo.errors }}</div>
-                </div>
-                <div class="mb-3">
-                  {{ form.telefono.label_tag }} {{ form.telefono }}
-                  <div class="text-danger">{{ form.telefono.errors }}</div>
-                </div>
-                <div class="mb-3">
-                  {{ form.mensaje.label_tag }} {{ form.mensaje }}
-                  <div class="text-danger">{{ form.mensaje.errors }}</div>
-                </div>
-                <div class="text-center">
-                  <button type="submit" class="btn btn-primary">
-                    Enviar Mensaje
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+      <!-- Información de contacto -->
+      <div class="col-lg-4 col-md-12">
+        <div class="contact-card info-card">
+          <h2>Información de Contacto</h2>
+          <p>Estamos aquí para ayudarte con cualquier duda, sugerencia o pedido especial. Contáctanos y obtén atención rápida y profesional.</p>
+          <ul class="contact-list">
+            <li><i class="fas fa-phone-alt"></i><a href="tel:+57-987886134">+57 3117673239</a></li>
+            <li><i class="fas fa-envelope"></i><a href="mailto:YSJIfashion@gmail.com">YSJIfashion@gmail.com</a></li>
+          </ul>
         </div>
       </div>
+
+      <!-- Formulario -->
+      <div class="col-lg-8 col-md-12">
+        <div class="contact-card form-card">
+          <h2>Ponte en Contacto</h2>
+
+          {% if enviado %}
+          <div class="alert alert-success text-center">¡Mensaje enviado correctamente!</div>
+          {% endif %}
+
+          <form method="POST" action="{% url 'contacto' %}" novalidate>
+            {% csrf_token %}
+
+            <div class="form-floating-group">
+              {{ form.nombre }}
+              {{ form.nombre.label_tag }}
+              <div class="text-danger">{{ form.nombre.errors }}</div>
+            </div>
+
+            <div class="form-floating-group">
+              {{ form.correo }}
+              {{ form.correo.label_tag }}
+              <div class="text-danger">{{ form.correo.errors }}</div>
+            </div>
+
+            <div class="form-floating-group">
+              {{ form.telefono }}
+              {{ form.telefono.label_tag }}
+              <div class="text-danger">{{ form.telefono.errors }}</div>
+            </div>
+
+            <div class="form-floating-group">
+              {{ form.mensaje }}
+              {{ form.mensaje.label_tag }}
+              <div class="text-danger">{{ form.mensaje.errors }}</div>
+            </div>
+
+            <div class="text-center mt-4">
+              <button type="submit" class="btn-submit">Enviar Mensaje</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
     </div>
+  </div>
+</div>
+
+<style>
+/* Tipografía elegante */
+body { font-family: 'Playfair Display', serif; background: #f8f0ff; }
+
+/* Sección general */
+.contact-section { padding: 80px 0; background: linear-gradient(120deg, #faf5ff, #ffffff); }
+
+/* Tarjetas */
+.contact-card {
+  background: #fff;
+  padding: 50px 35px;
+  border-radius: 25px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+  transition: all 0.4s ease;
+  position: relative;
+}
+.contact-card:hover { transform: translateY(-12px); box-shadow: 0 30px 60px rgba(0,0,0,0.2); }
+
+/* Info card */
+.info-card h2 { color: #000000; font-weight: 800; font-size: 28px; margin-bottom: 25px; }
+.info-card p { color: #555; font-size: 16px; line-height: 1.8; margin-bottom: 30px; }
+.contact-list { list-style: none; padding:0; }
+.contact-list li { display:flex; align-items:center; margin-bottom:18px; color:#333; font-weight:500; font-size:16px; }
+.contact-list li i { color:#000000; margin-right:12px; font-size:20px; }
+.contact-list li a { text-decoration:none; color:#222; transition:0.3s; }
+.contact-list li a:hover { color:#000000; }
+
+/* Form card */
+.form-card h2 { text-align:center; margin-bottom:45px; color:#000000; font-weight:800; font-size:28px; }
+
+/* Inputs flotantes estilo boutique */
+.form-floating-group { position: relative; margin-bottom:30px; }
+.form-floating-group input,
+.form-floating-group textarea {
+  width:100%;
+  padding:18px 22px;
+  border-radius:15px;
+  border:2px solid #270043;
+  font-size:16px;
+  background: #fcf7ff;
+  transition: all 0.4s ease;
+}
+.form-floating-group input:focus,
+.form-floating-group textarea:focus {
+  border-color:#000000;
+  box-shadow: 0 0 15px rgba(255, 234, 232, 0.25);
+  outline:none;
+}
+.form-floating-group label {
+  position:absolute;
+  top:-12px;
+  left:18px;
+  background:#ffffff;
+  padding:0 6px;
+  font-weight:600;
+  font-size:14px;
+  color:#000000;
+}
+
+/* Botón vistoso */
+.btn-submit {
+  display:inline-block;
+  padding:18px 65px;
+  background: linear-gradient(90deg,#000000,#000000);
+  color:#fff;
+  font-weight:700;
+  border:none;
+  border-radius:50px;
+  cursor:pointer;
+  font-size:16px;
+  transition: all 0.4s ease;
+  box-shadow: 0 12px 30px rgba(216, 195, 255, 0.4);
+}
+.btn-submit:hover {
+  transform: scale(1.1) rotate(-1deg);
+  box-shadow: 0 18px 40px rgba(199, 176, 255, 0.6);
+}
+
+/* Animación de entrada */
+.contact-card { opacity:0; transform: translateY(40px); animation: fadeInUp 1s forwards; }
+.info-card { animation-delay:0.2s; }
+.form-card { animation-delay:0.5s; }
+
+@keyframes fadeInUp {
+  0% { opacity:0; transform:translateY(40px);}
+  100% { opacity:1; transform:translateY(0);}
+}
+
+/* Responsivo */
+@media(max-width:991px){ .contact-card { margin-bottom:30px; } }
+</style>
+
     <!-- End Cart -->
 
     <!-- Start Instagram Feed  -->
