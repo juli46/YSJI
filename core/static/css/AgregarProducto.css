@@ -200,6 +200,7 @@
   font-size: 0.85em;
   margin-top: 4px;
   display: none;
+  font-size: small;
 }
 
 .input-error {

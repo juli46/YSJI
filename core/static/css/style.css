@@ -1110,7 +1110,6 @@ html, body {
      z-index: 0;
 }
  .main-instagram.owl-carousel .owl-nav button.owl-prev{
-     background: #010101;
      position: absolute;
      z-index: 1;
      display: block;
@@ -1130,7 +1129,6 @@ html, body {
      transition: all 0.3s ease;
 }
  .main-instagram.owl-carousel .owl-nav button.owl-next{
-     background: #010101;
      position: absolute;
      z-index: 1;
      display: block;
@@ -1149,9 +1147,7 @@ html, body {
      -o-transition: all 0.3s ease;
      transition: all 0.3s ease;
 }
- .main-instagram.owl-carousel .owl-nav button.owl-next:hover, .main-instagram.owl-carousel .owl-nav button.owl-prev:hover{
-     background: #000000;
-}
+
  .ins-inner-box{
      position: relative;
 }
@@ -1175,12 +1171,7 @@ html, body {
      vertical-align: middle;
      height: 100%;
 }
- .hov-in i{
-     color: #010101;
-     font-size: 48px;
-     position: relative;
-     z-index: 2;
-}
+
  .hov-in a i:hover{
      color: #ffffff;
 }
@@ -2361,9 +2352,9 @@ text-align: justify;
     padding: 12px 0;
     white-space: nowrap;
     overflow: hidden;
-    display: none;  /* se muestra con scroll */
-    position: sticky;
-    top: 90px; /* debajo del nav */
+    position: fixed;
+    display: none;
+    top: 90px;
     z-index: 999;
 }
 
@@ -2391,3 +2382,5 @@ text-align: justify;
     from { transform: translateX(100%); }
     to { transform: translateX(-100%); }
 }
+
+

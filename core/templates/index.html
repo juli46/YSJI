@@ -21,7 +21,51 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
         <style>
-            /* Small CSS helpers for discount ribbons on the index page */
+        .imagen-guia img,
+        .talla-block img {
+            width: 100%;
+            max-width: 1100px;  
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }      
+        .guia-tallas {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .intro-text {
+            text-align: center;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+        .talla-block {
+            text-align: justify;
+            margin-bottom: 50px;
+        }
+
+        .titulo-talla {
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .shadow {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .rounded {
+            border-radius: 8px;
+        }
             .ribbon-discount {
                 position: absolute;
                 top: 12px;
@@ -34,7 +78,7 @@
                 font-size: 12px;
                 box-shadow: 0 3px 8px rgba(0,0,0,0.18);
                 z-index: 10;
-                text-align: center;
+                text-align: justify;
             }
             .price-original { text-decoration: line-through; color: #999; font-size: 0.95rem; margin-right: 8px; }
             .price-discounted { color: #ff3b3b; font-weight: 700; font-size: 1.05rem; }
@@ -115,6 +159,7 @@
                 </li>
             </div>
         </nav>
+
     </header>
     <!-- Carrusel de Descuentos -->
     <div id="discount-carousel">
@@ -144,6 +189,7 @@
             {% endfor %}
         </div>
     </div>
+
 
 
     <div class="top-search">
@@ -315,10 +361,9 @@
 
                             <div class="mask-icon mt-auto" id="producto-{{ producto.id }}">
                                 <ul>
-                                    <button class="like-button" onclick="toggleLike('producto-{{ producto.id }}')">
-                                        <i class="far fa-heart"></i>
-                                    </button>
-                                    <span class="like-count">0</span> like
+                                    <li><a href="{% url 'Catalogo' %}?producto={{ producto.id }}"
+                                            data-toggle="tooltip" data-placement="right" title="Ver"><i
+                                                class="fas fa-eye"></i></a></li>
                                 </ul>
                                 <a class="cart" href="{% url 'Catalogo' %}?producto={{ producto.id }}">
                                     Ver
@@ -352,7 +397,70 @@
     </div>
 
     <!-- Fin Productos -->
+    <!--tallas-->
+<!-- Sección Guía de Tallas -->
+<div class="container my-5">
+    <div class="blog-row">
 
+        <div class="section-title-block text-center mb-4">
+            <h1>Encuentra Tu Talla Perfecta</h1>
+        </div>
+
+        <div class="guia-tallas">
+
+            <p class="intro-text">
+                En <strong>YSJI FASHION</strong> queremos que encuentres tu talla ideal con total confianza. 
+                Por eso hemos preparado una guía de medidas clara y precisa que te ayudará a identificar 
+                la talla que mejor se adapta a ti.  
+                Antes de realizar tu compra, te recomendamos revisar nuestra tabla de tallas.  
+               
+            </p>
+
+            <!-- Imagen: Cómo Medir -->
+            <div class="imagen-guia mb-5 text-center">
+                <img src="{% static 'images/como medir mujer.png' %}" 
+                     alt="Cómo medir el cuerpo para elegir tu talla - YSJI FASHION"
+                     class="img-fluid shadow rounded">
+            </div>
+
+            <!-- Tallas Mujer Superior -->
+            <div class="talla-block">
+                <h3 class="titulo-talla">Tallas de prendas superiores para mujer</h3>
+                <img src="{% static 'images/tallas mujer.png' %}" 
+                     alt="Tallas superiores mujer - YSJI FASHION"
+                     class="img-fluid shadow rounded mb-4">
+            </div>
+
+            <!-- Tallas Mujer Inferior -->
+            <div class="talla-block">
+                <h3 class="titulo-talla">Tallas de prendas inferiores para mujer</h3>
+                <img src="{% static 'images/tallas mujer inf.png' %}" 
+                     alt="Tallas inferiores mujer - YSJI FASHION"
+                     class="img-fluid shadow rounded mb-4">
+            </div>
+
+            <!-- Tallas Hombre Superior -->
+            <div class="talla-block">
+                <h3 class="titulo-talla">Tallas de prendas superiores para hombre</h3>
+                <img src="{% static 'images/tallas hombre.png' %}" 
+                     alt="Tallas superiores hombre - YSJI FASHION"
+                     class="img-fluid shadow rounded mb-4">
+            </div>
+
+            <!-- Tallas Hombre Inferior -->
+            <div class="talla-block">
+                <h3 class="titulo-talla">Tallas de prendas inferiores para hombre</h3>
+                <img src="{% static 'images/tallas hombre inf.png' %}" 
+                     alt="Tallas inferiores hombre - YSJI FASHION"
+                     class="img-fluid shadow rounded mb-4">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+     <!-- fin tallas-->
     <div class="container my-5">
         <div class="blog-row">
             <div class="section-title-block">
@@ -497,10 +605,8 @@
         {% endif %}
         {% endfor %}
     </div>
-    {% endif %}
-
-
-
+    {% endif %} 
+    
     <script>
         document.addEventListener("scroll", () => {
             const bar = document.getElementById("discount-carousel");
@@ -512,7 +618,5 @@
             }
         });
     </script>
-
 </body>
-
 </html>
